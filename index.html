@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- PWA & Mobile App Meta Tags -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Drea & Shaq">
+<meta name="theme-color" content="#f3e5cc">
+<!-- Fallback App Icon (Emoji favicon) -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♥</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23d62828%22/><text y=%22.9em%22 x=%2215%22 font-size=%2280%22>♥</text></svg>">
+
+<title>Drea & Shaq · Summer 2026</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Shrikhand&family=Space+Grotesk:wght@400;500;700&family=Special+Elite&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root {
+  --cream: #f3e5cc;
+  --cream-2: #ebdab8;
+  --cream-3: #e1cd9f;
+  --ink: #2a0e0e;
+  --ink-2: #4a1f1f;
+  --tomato: #d62828;
+  --tomato-dark: #a01e1e;
+  --hot-pink: #ff3d7f;
+  --pink: #ffb3c6;
+  --pink-2: #f48fb1;
+  --butter: #ffd166;
+  --butter-2: #f4a300;
+  --teal: #1d7a7a;
+  --kraft: #b8884a;
+  --kraft-dark: #8b5a2b;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+*::selection { background: var(--hot-pink); color: white; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(255, 61, 127, 0.06) 0%, transparent 35%),
+    radial-gradient(circle at 82% 78%, rgba(214, 40, 40, 0.05) 0%, transparent 35%),
+    radial-gradient(circle at 50% 50%, rgba(255, 209, 102, 0.04) 0%, transparent 40%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.bg-hearts { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.bg-heart { position: absolute; color: var(--hot-pink); opacity: 0.08; font-size: 22px; animation: drift 22s linear infinite; user-select: none; }
+@keyframes drift { 0% { transform: translateY(110vh) rotate(0deg); } 100% { transform: translateY(-15vh) rotate(360deg); } }
+
+/* ============ HERO ============ */
+.hero { position: relative; padding: calc(70px + var(--safe-top)) 24px 50px; text-align: center; overflow: hidden; z-index: 1; }
+.hero-deco { position: absolute; pointer-events: none; opacity: 0.55; }
+.hero-deco.d1 { top: 8%;  left: 4%;  transform: rotate(-15deg); width: 90px; }
+.hero-deco.d2 { top: 14%; right: 5%; transform: rotate(12deg);  width: 110px; }
+.hero-deco.d3 { bottom: 10%; left: 8%; transform: rotate(8deg); width: 80px; }
+.hero-deco.d4 { bottom: 8%;  right: 9%; transform: rotate(-10deg); width: 100px; }
+.hero-deco.d5 { top: 50%; left: 2%; transform: rotate(-5deg) translateY(-50%); width: 70px; opacity: 0.4; }
+.hero-deco.d6 { top: 45%; right: 2%; transform: rotate(18deg) translateY(-50%); width: 70px; opacity: 0.4; }
+
+.hero-kicker { font-family: 'Special Elite', monospace; font-size: 13px; letter-spacing: 0.42em; text-transform: uppercase; color: var(--tomato); margin-bottom: 18px; display: inline-block; background: var(--butter); padding: 8px 22px; transform: rotate(-1.5deg); box-shadow: 3px 3px 0 var(--ink); border: 2px solid var(--ink); }
+.hero-title { font-family: 'Shrikhand', cursive; font-size: clamp(48px, 9vw, 120px); color: var(--tomato); line-height: 0.88; text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 8px; position: relative; display: inline-block; text-shadow: 4px 4px 0 var(--ink), -1px -1px 0 var(--butter); }
+.hero-title .amp { color: var(--hot-pink); display: inline-block; transform: rotate(-6deg); margin: 0 6px; font-size: 0.85em; text-shadow: 3px 3px 0 var(--ink), -1px -1px 0 var(--butter); }
+.hero-title .year { color: var(--ink); -webkit-text-stroke: 0; background: var(--butter); padding: 0 14px; display: inline-block; transform: rotate(2deg); box-shadow: 5px 5px 0 var(--hot-pink); text-shadow: none; border: 3px solid var(--ink); margin-left: 8px; }
+.hero-subtitle { font-family: 'Pacifico', cursive; font-size: clamp(22px, 3.4vw, 38px); color: var(--ink-2); margin-top: 28px; transform: rotate(-1deg); }
+.hero-tagline { font-family: 'Special Elite', monospace; font-size: 12px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--ink-2); margin-top: 16px; opacity: 0.75; }
+.hero-tagline .star { color: var(--tomato); }
+.hero-stamps { margin-top: 36px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.stamp { font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--tomato-dark); border: 2px solid var(--tomato-dark); padding: 6px 12px; background: transparent; transform: rotate(-3deg); opacity: 0.85; position: relative; }
+.stamp:nth-child(2) { transform: rotate(2deg); border-color: var(--teal); color: var(--teal); }
+.stamp:nth-child(3) { transform: rotate(-1.5deg); border-color: var(--ink); color: var(--ink); }
+
+/* ============ TABS ============ */
+.tab-strip { position: sticky; top: 0; z-index: 100; background: var(--cream); padding: 22px 16px 14px; border-bottom: 3px solid var(--ink); box-shadow: 0 6px 18px rgba(42, 14, 14, 0.08); }
+.tab-strip::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, transparent 0 3px, rgba(214, 40, 40, 0.04) 3px 4px); pointer-events: none; }
+.tab-strip-inner { max-width: 1300px; margin: 0 auto; display: flex; gap: 10px; justify-content: flex-start; flex-wrap: nowrap; position: relative; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+.tab-strip-inner::-webkit-scrollbar { display: none; }
+
+.tab { font-family: 'Shrikhand', cursive; font-size: 15px; background: var(--butter); color: var(--ink); border: 2.5px solid var(--ink); padding: 12px 20px 14px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; position: relative; box-shadow: 3px 3px 0 var(--ink); transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.2s; user-select: none; white-space: nowrap; flex-shrink: 0; }
+.tab .tab-icon { font-size: 18px; line-height: 1; color: var(--tomato); }
+.tab .tab-no { font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: 0.1em; position: absolute; top: 2px; right: 5px; color: var(--tomato); opacity: 0.7; }
+.tab:hover { transform: translate(-2px, -2px) rotate(-2deg); box-shadow: 5px 5px 0 var(--ink); }
+.tab.active { background: var(--tomato); color: var(--cream); transform: rotate(-1.5deg) translateY(-2px); box-shadow: 4px 5px 0 var(--ink); }
+.tab.active .tab-no { color: var(--butter); }
+.tab.active .tab-icon { color: var(--butter); }
+.tab.tab-add { background: var(--hot-pink); color: white; }
+.tab.tab-add .tab-icon { color: white; }
+.tab.tab-add:hover { background: var(--tomato); }
+
+/* ============ PAGE WRAP ============ */
+.page { max-width: 1300px; margin: 0 auto; padding: 56px 24px calc(90px + var(--safe-bottom)); position: relative; z-index: 1; }
+.section-head { text-align: center; margin-bottom: 50px; }
+.section-head h2 { font-family: 'Shrikhand', cursive; font-size: clamp(34px, 5.2vw, 58px); color: var(--tomato); text-shadow: 3px 3px 0 var(--ink); line-height: 1; display: inline-block; transform: rotate(-1deg); }
+.section-head .under { font-family: 'Special Elite', monospace; font-size: 12px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--ink-2); margin-top: 14px; display: flex; align-items: center; gap: 14px; justify-content: center; }
+.section-head .under::before, .section-head .under::after { content: ''; height: 1px; width: 40px; background: var(--ink-2); }
+
+/* ============ GALLERY ============ */
+.gallery-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px 24px; margin-bottom: 30px; }
+.polaroid { background: #faf3e0; padding: 14px 14px 56px; box-shadow: 0 12px 28px rgba(42, 14, 14, 0.18), 0 2px 4px rgba(42, 14, 14, 0.1); position: relative; transition: transform 0.4s cubic-bezier(.2,.8,.3,1.2), box-shadow 0.4s; border: 1px solid rgba(42, 14, 14, 0.08); }
+.polaroid:hover { transform: rotate(0deg) translateY(-8px) scale(1.02) !important; box-shadow: 0 24px 48px rgba(42, 14, 14, 0.28); z-index: 10; }
+.polaroid img { width: 100%; display: block; background: var(--cream-3); filter: contrast(1.02) saturate(1.04); }
+.polaroid .caption { position: absolute; bottom: 14px; left: 14px; right: 14px; text-align: center; font-family: 'Pacifico', cursive; font-size: 17px; color: var(--ink-2); line-height: 1.1; }
+.polaroid .tape { position: absolute; width: 80px; height: 22px; background: rgba(255, 209, 102, 0.7); top: -10px; left: 50%; transform: translateX(-50%) rotate(-3deg); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.polaroid .tape.tl { top: -8px; left: -16px; transform: rotate(-32deg); width: 70px; }
+.polaroid .tape.tr { top: -8px; left: auto; right: -16px; transform: rotate(32deg); width: 70px; }
+.polaroid .stamp-mark { position: absolute; top: 8px; right: 8px; font-family: 'Special Elite', monospace; font-size: 8px; letter-spacing: 0.18em; color: var(--tomato); border: 1.5px solid var(--tomato); padding: 3px 5px; transform: rotate(8deg); opacity: 0.85; background: rgba(255,255,255,0.4); }
+
+.p1 { grid-column: span 5; transform: rotate(-2.5deg); }
+.p2 { grid-column: span 4; transform: rotate(1.5deg); margin-top: 40px; }
+.p3 { grid-column: span 3; transform: rotate(-1deg); margin-top: 10px; }
+.p4 { grid-column: span 3; transform: rotate(2deg); }
+.p5 { grid-column: span 4; transform: rotate(-1.8deg); margin-top: -10px; }
+.p6 { grid-column: span 5; transform: rotate(1.2deg); }
+
+.scrap-row { margin: 30px 0 50px; display: flex; justify-content: center; align-items: center; gap: 30px; flex-wrap: wrap; position: relative; min-height: 80px; }
+.ticket { background: var(--cream-2); border: 2px dashed var(--ink-2); padding: 14px 22px; font-family: 'Special Elite', monospace; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink); position: relative; transform: rotate(-2deg); }
+.ticket::before, .ticket::after { content: ''; position: absolute; width: 14px; height: 14px; background: var(--cream); border-radius: 50%; top: 50%; transform: translateY(-50%); border: 2px solid var(--ink-2); }
+.ticket::before { left: -10px; }
+.ticket::after { right: -10px; }
+.ticket .big { font-family: 'Shrikhand', cursive; font-size: 22px; color: var(--tomato); display: block; margin-top: 4px; letter-spacing: 0; }
+.note-card { background: var(--butter); padding: 18px 22px; font-family: 'Pacifico', cursive; font-size: 19px; color: var(--ink); transform: rotate(3deg); box-shadow: 4px 4px 0 var(--ink); border: 2px solid var(--ink); max-width: 280px; position: relative; }
+.note-card .pin { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 14px; height: 14px; background: var(--tomato); border-radius: 50%; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3); }
+
+/* ============ DATE IDEAS ============ */
+.date-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+.date-card { background: #faf3e0; border: 2.5px solid var(--ink); padding: 0 0 26px; text-decoration: none; color: inherit; display: flex; flex-direction: column; position: relative; box-shadow: 6px 6px 0 var(--ink); transition: transform 0.25s ease, box-shadow 0.25s ease; overflow: hidden; }
+.date-card:nth-child(1) { transform: rotate(-1.2deg); }
+.date-card:nth-child(2) { transform: rotate(0.8deg); }
+.date-card:nth-child(3) { transform: rotate(-0.5deg); }
+.date-card:nth-child(4) { transform: rotate(1.4deg); }
+.date-card:nth-child(5) { transform: rotate(-1deg); }
+.date-card:nth-child(6) { transform: rotate(0.6deg); }
+.date-card:hover { transform: rotate(0) translateY(-6px) !important; box-shadow: 10px 12px 0 var(--ink); }
+.date-card .ribbon { position: absolute; top: 14px; right: -34px; background: var(--tomato); color: var(--cream); font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.3em; padding: 5px 40px; transform: rotate(35deg); text-transform: uppercase; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.date-card .photo-wrap { position: relative; overflow: hidden; border-bottom: 2.5px solid var(--ink); aspect-ratio: 4/3; background: var(--cream-3); }
+.date-card .photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; filter: contrast(1.04) saturate(1.05) sepia(0.06); transition: transform 0.6s ease; }
+.date-card:hover .photo-wrap img { transform: scale(1.06); }
+.date-card .photo-wrap::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, transparent 60%, rgba(42, 14, 14, 0.18) 100%), repeating-linear-gradient(45deg, transparent 0 6px, rgba(255, 209, 102, 0.05) 6px 7px); pointer-events: none; }
+.date-card .num { font-family: 'Special Elite', monospace; font-size: 11px; color: var(--tomato); letter-spacing: 0.3em; padding: 16px 20px 0; }
+.date-card h3 { font-family: 'Shrikhand', cursive; font-size: 28px; color: var(--ink); padding: 4px 20px 8px; line-height: 1; }
+.date-card .desc { font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink-2); padding: 0 20px 14px; line-height: 1.5; flex-grow: 1; }
+.date-card .addr { font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-2); padding: 0 20px 14px; border-top: 1px dashed var(--ink-2); margin: 0 20px; padding-top: 12px; opacity: 0.85; }
+.date-card .cta { margin: 0 20px; background: var(--ink); color: var(--cream); font-family: 'Shrikhand', cursive; font-size: 13px; text-align: center; padding: 10px; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
+.date-card:hover .cta { background: var(--tomato); }
+
+/* ============ PHOTO BOOK (ADD TAB) ============ */
+.photo-book { background: var(--kraft); background-image: radial-gradient(circle at 30% 20%, rgba(0,0,0,0.12) 0%, transparent 60%), radial-gradient(circle at 70% 80%, rgba(0,0,0,0.1) 0%, transparent 60%), repeating-linear-gradient(90deg, transparent 0 3px, rgba(0,0,0,0.02) 3px 4px), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.1 0 0 0 0 0 0 0 0 0.15 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); border: 3px solid var(--ink); padding: 50px 36px 60px; position: relative; box-shadow: 12px 12px 0 var(--ink), inset 0 0 80px rgba(0,0,0,0.25); }
+.photo-book::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 4px; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.3) 20%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.3) 80%, transparent 100%); transform: translateX(-50%); pointer-events: none; }
+.photo-book::after { content: ''; position: absolute; inset: 14px; border: 1px solid rgba(255, 240, 200, 0.15); pointer-events: none; }
+.book-label { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.5em; text-transform: uppercase; color: rgba(255, 240, 200, 0.55); background: rgba(0,0,0,0.2); padding: 4px 16px; z-index: 3; }
+.book-header { text-align: center; margin-bottom: 36px; color: #f9e9c4; position: relative; z-index: 2; }
+.book-header h2 { font-family: 'DM Serif Display', serif; font-size: clamp(28px, 4vw, 44px); font-style: italic; letter-spacing: 0.02em; text-shadow: 2px 2px 0 rgba(0,0,0,0.4); }
+.book-header p { font-family: 'Pacifico', cursive; font-size: 18px; margin-top: 8px; color: var(--butter); }
+.book-tools { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; position: relative; z-index: 2; }
+.tool-btn { font-family: 'Shrikhand', cursive; font-size: 14px; border: 2.5px solid var(--ink); padding: 12px 22px; cursor: pointer; background: var(--butter); color: var(--ink); box-shadow: 4px 4px 0 var(--ink); transition: transform 0.18s, box-shadow 0.18s; display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+.tool-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+.tool-btn.primary { background: var(--hot-pink); color: white; }
+.tool-btn.danger { background: var(--tomato); color: white; }
+.tool-btn.ghost { background: transparent; color: #f9e9c4; border-color: #f9e9c4; box-shadow: 4px 4px 0 rgba(0,0,0,0.4); }
+#file-input { display: none; }
+.book-empty { text-align: center; color: rgba(255, 240, 200, 0.6); font-family: 'Special Elite', monospace; font-size: 14px; letter-spacing: 0.2em; padding: 80px 20px; text-transform: uppercase; border: 2px dashed rgba(255, 240, 200, 0.3); margin: 0 20px; position: relative; z-index: 2; }
+.book-empty .big-heart { font-size: 60px; display: block; margin-bottom: 18px; color: var(--hot-pink); opacity: 0.7; }
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px 28px; position: relative; z-index: 2; }
+.book-photo { background: #faf3e0; padding: 12px 12px 50px; position: relative; box-shadow: 0 8px 18px rgba(0,0,0,0.35), 0 2px 4px rgba(0,0,0,0.2); cursor: pointer; animation: pop-in 0.4s cubic-bezier(.2,.8,.3,1.4) backwards; }
+@keyframes pop-in { 0% { opacity: 0; transform: scale(0.7) rotate(0); } 100% { opacity: 1; } }
+.book-photo:nth-child(3n+1) { transform: rotate(-2.2deg); }
+.book-photo:nth-child(3n+2) { transform: rotate(1.5deg); }
+.book-photo:nth-child(3n+3) { transform: rotate(-1deg); }
+.book-photo:nth-child(4n) { transform: rotate(2.4deg); }
+.book-photo:hover { transform: rotate(0) scale(1.04) !important; z-index: 5; }
+.book-photo img { width: 100%; display: block; background: var(--cream-3); filter: contrast(1.05) saturate(1.05) sepia(0.04); }
+.book-photo .bp-caption { position: absolute; bottom: 12px; left: 12px; right: 12px; text-align: center; font-family: 'Pacifico', cursive; font-size: 15px; color: var(--ink-2); line-height: 1.1; }
+.book-photo .bp-date { position: absolute; top: 6px; left: 6px; font-family: 'Special Elite', monospace; font-size: 9px; letter-spacing: 0.15em; color: var(--tomato); background: rgba(255,255,255,0.7); padding: 2px 6px; transform: rotate(-4deg); }
+.book-photo .bp-tape { position: absolute; width: 60px; height: 18px; background: rgba(255, 209, 102, 0.55); top: -8px; left: 50%; transform: translateX(-50%) rotate(-4deg); }
+.book-photo .bp-remove { position: absolute; top: -10px; right: -10px; width: 26px; height: 26px; background: var(--tomato); color: white; border: 2px solid var(--ink); border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: 'Shrikhand', cursive; opacity: 0; transition: opacity 0.2s; z-index: 6; }
+.book-photo:hover .bp-remove { opacity: 1; }
+
+/* ============ FOOTER ============ */
+.footer { text-align: center; padding: 60px 24px calc(50px + var(--safe-bottom)); font-family: 'Pacifico', cursive; color: var(--ink-2); position: relative; z-index: 1; }
+.footer .heart-big { font-size: 50px; color: var(--tomato); display: block; margin-bottom: 14px; animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+.footer p { font-size: 22px; margin-bottom: 8px; }
+.footer .small { font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.6; margin-top: 14px; }
+
+/* ============ TOAST ============ */
+.toast-wrap { position: fixed; top: calc(90px + var(--safe-top)); right: 24px; z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
+.toast { background: var(--ink); color: var(--cream); padding: 14px 22px; font-family: 'Shrikhand', cursive; font-size: 14px; box-shadow: 4px 4px 0 var(--tomato); border: 2px solid var(--tomato); transform: translateX(120%); transition: transform 0.4s cubic-bezier(.2,.8,.3,1.2); display: flex; align-items: center; gap: 10px; max-width: 320px; }
+.toast.show { transform: translateX(0); }
+.toast .ic { font-size: 18px; }
+
+/* ============ CAPTION MODAL ============ */
+.modal-overlay { position: fixed; inset: 0; background: rgba(42, 14, 14, 0.7); z-index: 999; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(3px); }
+.modal-overlay.show { display: flex; }
+.modal { background: var(--cream); border: 3px solid var(--ink); box-shadow: 10px 10px 0 var(--tomato); padding: 30px 28px 24px; max-width: 380px; width: 100%; position: relative; transform: rotate(-1deg); }
+.modal h3 { font-family: 'Shrikhand', cursive; font-size: 24px; color: var(--tomato); margin-bottom: 16px; text-shadow: 2px 2px 0 var(--ink); }
+.modal label { font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ink-2); display: block; margin-bottom: 6px; }
+.modal input[type=text] { width: 100%; font-family: 'Pacifico', cursive; font-size: 18px; padding: 10px 12px; background: #faf3e0; border: 2px solid var(--ink); color: var(--ink); margin-bottom: 14px; outline: none; }
+.modal input[type=date] { width: 100%; font-family: 'Special Elite', monospace; font-size: 13px; padding: 10px 12px; background: #faf3e0; border: 2px solid var(--ink); color: var(--ink); margin-bottom: 22px; outline: none; }
+.modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 900px) {
+  .p1, .p2, .p3, .p4, .p5, .p6 { grid-column: span 12; margin-top: 0; }
+  .gallery-grid { gap: 40px 24px; }
+  .tab { font-size: 13px; padding: 10px 14px 12px; }
+  .hero { padding: 50px 16px 36px; }
+}
+@media (max-width: 600px) {
+  .photo-book { padding: 40px 18px 50px; }
+  .photo-book::before { display: none; }
+  .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 26px 18px; }
+  .tab-strip-inner { gap: 8px; }
+  .tab { font-size: 12px; padding: 9px 12px 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .bg-heart { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-hearts" id="bg-hearts" aria-hidden="true"></div>
+
+<header class="hero">
+  <img class="hero-deco d1" src="https://z-cdn-media.chatglm.cn/files/d8970425-ad8f-4722-aa7a-aa4ff77c7920.jpeg?auth_key=1882220133-cb91724a82974a1a924425a809899d4e-0-d60f9f2ce9f1dbacfd1fcb58c1dcd330" alt="">
+  <img class="hero-deco d2" src="https://z-cdn-media.chatglm.cn/files/af4e9128-9f76-483a-a8c8-d97b606cf03b.jpg?auth_key=1882220133-f81783455fae4ff2b75be4792b034f6d-0-09a3ff1fd4e3a9b20764bdbc15863949" alt="">
+  <img class="hero-deco d3" src="https://z-cdn-media.chatglm.cn/files/91cb91d2-41b2-4ded-917b-1711a46ddfd6.jpg?auth_key=1882220133-ea1e3870307c4ffebcb978bc0ea04146-0-d7804473790ccfd278964be5e51b92c3" alt="">
+  <img class="hero-deco d4" src="https://z-cdn-media.chatglm.cn/files/d8970425-ad8f-4722-aa7a-aa4ff77c7920.jpeg?auth_key=1882220133-cb91724a82974a1a924425a809899d4e-0-d60f9f2ce9f1dbacfd1fcb58c1dcd330" alt="">
+  <img class="hero-deco d5" src="https://z-cdn-media.chatglm.cn/files/af4e9128-9f76-483a-a8c8-d97b606cf03b.jpg?auth_key=1882220133-f81783455fae4ff2b75be4792b034f6d-0-09a3ff1fd4e3a9b20764bdbc15863949" alt="">
+  <img class="hero-deco d6" src="https://z-cdn-media.chatglm.cn/files/91cb91d2-41b2-4ded-917b-1711a46ddfd6.jpg?auth_key=1882220133-ea1e3870307c4ffebcb978bc0ea04146-0-d7804473790ccfd278964be5e51b92c3" alt="">
+
+  <div class="hero-kicker">Est. June 2026 · North Jersey</div>
+  <h1 class="hero-title">
+    Drea <span class="amp">&</span> Shaq <span class="year">'26</span>
+  </h1>
+  <div class="hero-subtitle">a retro love story</div>
+  <div class="hero-tagline"><span class="star">✦</span> Essex + Union County, NJ <span class="star">✦</span></div>
+  <div class="hero-stamps">
+    <span class="stamp">Posted with Love</span>
+    <span class="stamp">Air Mail</span>
+    <span class="stamp">Par Avion</span>
+  </div>
+</header>
+
+<nav class="tab-strip" aria-label="Section tabs">
+  <div class="tab-strip-inner">
+    <a class="tab active" data-target="home"><span class="tab-no">01</span><span class="tab-icon">✿</span> Home</a>
+    <a class="tab" data-target="mini-golf"><span class="tab-no">02</span><span class="tab-icon">◉</span> Mini-Golf</a>
+    <a class="tab" data-target="paint-sip"><span class="tab-no">03</span><span class="tab-icon">✎</span> Paint &amp; Sip</a>
+    <a class="tab" data-target="top-golf"><span class="tab-no">04</span><span class="tab-icon">⚾</span> Top Golf</a>
+    <a class="tab" data-target="festivals"><span class="tab-no">05</span><span class="tab-icon">★</span> Festivals</a>
+    <a class="tab" data-target="beach"><span class="tab-no">06</span><span class="tab-icon">≋</span> Beach Day</a>
+    <a class="tab" data-target="picnic"><span class="tab-no">07</span><span class="tab-icon">❉</span> Picnic</a>
+    <a class="tab tab-add" data-target="book"><span class="tab-no">08</span><span class="tab-icon">♡</span> Photo Book</a>
+  </div>
+</nav>
+
+<main class="page">
+
+  <section id="home" class="tab-section">
+    <div class="section-head">
+      <h2>Us, In Pictures</h2>
+      <div class="under">scrapbook page · vol. 1</div>
+    </div>
+    <div class="gallery-grid">
+      <div class="polaroid p1">
+        <div class="tape"></div>
+        <span class="stamp-mark">Aug · 2026</span>
+        <img src="https://z-cdn-media.chatglm.cn/files/f678ef2b-9763-4f99-8630-59c181fb7534.jpg?auth_key=1882220133-8315a315993b4ae597b520b012c7710c-0-94eb7d47fe7a6ddba3249877c88db776" alt="Us, comic retro">
+        <div class="caption">our little comic strip</div>
+      </div>
+      <div class="polaroid p2">
+        <div class="tape tl"></div>
+        <span class="stamp-mark">NJ · night</span>
+        <img src="https://z-cdn-media.chatglm.cn/files/a9923e1e-3f92-4322-9d50-c4ce421df410.jpg?auth_key=1882220133-3a17f91ce5a34c07a6c61ed0e18566ee-0-653dbd1d7a1c0c3b5dcc2fbdc666e96b" alt="Us B&W">
+        <div class="caption">city lights, you & me</div>
+      </div>
+      <div class="polaroid p3">
+        <div class="tape tr"></div>
+        <img src="https://z-cdn-media.chatglm.cn/files/d8970425-ad8f-4722-aa7a-aa4ff77c7920.jpeg?auth_key=1882220133-cb91724a82974a1a924425a809899d4e-0-d60f9f2ce9f1dbacfd1fcb58c1dcd330" alt="concentric hearts">
+        <div class="caption">layers of us</div>
+      </div>
+      <div class="polaroid p4">
+        <div class="tape"></div>
+        <img src="https://z-cdn-media.chatglm.cn/files/af4e9128-9f76-483a-a8c8-d97b606cf03b.jpg?auth_key=1882220133-f81783455fae4ff2b75be4792b034f6d-0-09a3ff1fd4e3a9b20764bdbc15863949" alt="groovy hearts">
+        <div class="caption">groovy kind of love</div>
+      </div>
+      <div class="polaroid p5">
+        <div class="tape tl"></div>
+        <span class="stamp-mark">true love</span>
+        <img src="https://z-cdn-media.chatglm.cn/files/3bb5b4a3-b02b-42fb-b287-e8830ce92b9b.jpg?auth_key=1882220133-11e2a00996804042a0644a4792288b05-0-e91e886d89041a99d9f68f348d7887b7" alt="True couple love">
+        <div class="caption">true love, indeed</div>
+      </div>
+      <div class="polaroid p6">
+        <div class="tape"></div>
+        <span class="stamp-mark">peek-a-boo</span>
+        <img src="https://z-cdn-media.chatglm.cn/files/54b66a80-ed03-40fe-b0f4-182946d9efe1.jpg?auth_key=1882220133-3680770878bc4014be90590f226899f8-0-aebbd37dd29d87cbf1905980761d25b9" alt="Covering my face">
+        <div class="caption">guess who?</div>
+      </div>
+    </div>
+    <div class="scrap-row">
+      <div class="ticket">Admission · One Summer<span class="big">2026</span></div>
+      <div class="note-card"><span class="pin"></span>Drea — here's to slow mornings, long drives, and you. Love, me.</div>
+      <div class="ticket">Valid · NJ → anywhere<span class="big">∞</span></div>
+    </div>
+  </section>
+
+  <section id="mini-golf" class="tab-section" hidden>
+    <div class="section-head"><h2>Mini-Golf Date</h2><div class="under">putt · around · town</div></div>
+    <div class="date-grid">
+      <a class="date-card" href="https://www.google.com/search?q=Monster+Mini+Golf+Flemington+NJ" target="_blank" rel="noopener">
+        <div class="ribbon">Pick Me</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1611867967135-0faab97d35fd?w=600&q=70" alt="Monster Mini Golf"></div>
+        <div class="num">№ 01 / Flemington</div><h3>Monster Mini Golf</h3>
+        <p class="desc">Glow-in-the-dark indoor mini-golf with a monster theme. Perfect for a hot afternoon — fully air-conditioned, slightly goofy, very fun.</p>
+        <div class="addr">Flemington · 30 min from Montclair</div><div class="cta">Tee Off →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=Hybrid+Golf+Cranford+NJ" target="_blank" rel="noopener">
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1535131749006-b7f58c99051b?w=600&q=70" alt="Hybrid Golf"></div>
+        <div class="num">№ 02 / Cranford</div><h3>Hybrid Golf</h3>
+        <p class="desc">Outdoor mini-golf with a country-club vibe. Bring your A-game (or your giggling, both welcome). Ice cream stand next door.</p>
+        <div class="addr">Cranford · Union County</div><div class="cta">Tee Off →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=South+Mountain+Reservation+mini+golf+Maplewood+NJ" target="_blank" rel="noopener">
+        <div class="ribbon">Classic</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1598887142487-f1c2e5c1f6a8?w=600&q=70" alt="South Mountain Mini Golf"></div>
+        <div class="num">№ 03 / Maplewood</div><h3>Brendan Byrne Mini Golf</h3>
+        <p class="desc">Old-school charm, windmills and all. Classic South Mountain Reservation vibes — a low-key evening date spot.</p>
+        <div class="addr">Maplewood · Essex County</div><div class="cta">Tee Off →</div>
+      </a>
+    </div>
+  </section>
+
+  <section id="paint-sip" class="tab-section" hidden>
+    <div class="section-head"><h2>Paint &amp; Sip</h2><div class="under">two · brushes · one · canvas</div></div>
+    <div class="date-grid">
+      <a class="date-card" href="https://www.google.com/search?q=Paint+a+Vibe+Montclair+NJ" target="_blank" rel="noopener">
+        <div class="ribbon">Drea's Pick</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&q=70" alt="paint and sip"></div>
+        <div class="num">№ 01 / Essex</div><h3>Paint a Vibe Montclair</h3>
+        <p class="desc">BYOB painting studio in the heart of Montclair. Instructors walk you through a featured painting — yours to take home & hang.</p>
+        <div class="addr">Montclair · Essex County</div><div class="cta">Reserve →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=Corks+and+Canvas+Westfield+NJ" target="_blank" rel="noopener">
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=600&q=70" alt="paint and sip"></div>
+        <div class="num">№ 02 / Union</div><h3>Corks &amp; Canvas</h3>
+        <p class="desc">Sip wine, paint badly, laugh a lot. They provide the supplies; you bring the playlist energy. Couple's canvases available.</p>
+        <div class="addr">Westfield · Union County</div><div class="cta">Reserve →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=Color+Me+Mine+Montclair+NJ" target="_blank" rel="noopener">
+        <div class="ribbon">Cozy</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=70" alt="pottery"></div>
+        <div class="num">№ 03 / Essex</div><h3>Color Me Mine</h3>
+        <p class="desc">Pottery painting for a slower kind of afternoon. Pick a piece, pick your colors, sit close, take your time.</p>
+        <div class="addr">Montclair · Essex County</div><div class="cta">Reserve →</div>
+      </a>
+    </div>
+  </section>
+
+  <section id="top-golf" class="tab-section" hidden>
+    <div class="section-head"><h2>Top Golf</h2><div class="under">swing · sip · repeat</div></div>
+    <div class="date-grid">
+      <a class="date-card" href="https://topgolf.com/us/edison/" target="_blank" rel="noopener">
+        <div class="ribbon">Open Year-Round</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1591491653056-4e0f4a4e6c1a?w=600&q=70" alt="Topgolf Edison"></div>
+        <div class="num">№ 01 / Edison</div><h3>Topgolf Edison</h3>
+        <p class="desc">Heated bays, food + drinks brought to your bay, and microchipped balls that score themselves. Beginner-friendly — really.</p>
+        <div class="addr">Edison · Middlesex County</div><div class="cta">Book a Bay →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=Galloping+Hill+Golf+Course+Union+NJ" target="_blank" rel="noopener">
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=600&q=70" alt="Galloping Hill Golf Course"></div>
+        <div class="num">№ 02 / Union</div><h3>Galloping Hill Golf Course</h3>
+        <p class="desc">Public driving range with a beautiful layout. Bucket of balls, sunset, you. Simple, classic.</p>
+        <div class="addr">Union · Union County</div><div class="cta">Range Time →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=Ash+Brook+Golf+Course+Scotch+Plains+NJ" target="_blank" rel="noopener">
+        <div class="ribbon">Sunset Spot</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1535131749006-b7f58c99051b?w=600&q=70" alt="Ash Brook Golf Course"></div>
+        <div class="num">№ 03 / Scotch Plains</div><h3>Ash Brook Golf Course</h3>
+        <p class="desc">Quiet 18-hole course with a laid-back driving range. Great for an early-evening swing & a walk.</p>
+        <div class="addr">Scotch Plains · Union County</div><div class="cta">Range Time →</div>
+      </a>
+    </div>
+  </section>
+
+  <section id="festivals" class="tab-section" hidden>
+    <div class="section-head"><h2>Festivals &amp; Fairs</h2><div class="under">cotton · candy · sunsets</div></div>
+    <div class="date-grid">
+      <a class="date-card" href="https://www.google.com/search?q=New+Jersey+State+Fair+Sussex+County+Farm+and+Horse+Show" target="_blank" rel="noopener">
+        <div class="ribbon">August</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1567892737950-30c4db905a76?w=600&q=70" alt="NJ State Fair"></div>
+        <div class="num">№ 01 / Augusta</div><h3>NJ State Fair</h3>
+        <p class="desc">Ferris wheel, fried everything, farm animals, and live music. A full summer day, easily. Wear walking shoes.</p>
+        <div class="addr">Sussex County · August</div><div class="cta">Fair Info →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=Essex+County+street+fair+summer+2026" target="_blank" rel="noopener">
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=600&q=70" alt="street fair"></div>
+        <div class="num">№ 02 / Essex</div><h3>Essex County Street Fairs</h3>
+        <p class="desc">Bloomfield, Montclair, Maplewood — every weekend brings a new street fair with food trucks, crafts, and live bands.</p>
+        <div class="addr">Various · All Summer</div><div class="cta">Schedule →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=Union+County+summer+concerts+Echo+Lake+Park" target="_blank" rel="noopener">
+        <div class="ribbon">Free Shows</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=70" alt="music festival"></div>
+        <div class="num">№ 03 / Union</div><h3>Union County Summer Concerts</h3>
+        <p class="desc">Free outdoor concerts at Echo Lake Park & Oak Ridge Park. Bring a blanket, picnic snacks, a jacket for after sunset.</p>
+        <div class="addr">Various Parks · Weekly</div><div class="cta">Lineup →</div>
+      </a>
+    </div>
+  </section>
+
+  <section id="beach" class="tab-section" hidden>
+    <div class="section-head"><h2>Beach Day</h2><div class="under">salt · air · sandy · toes</div></div>
+    <div class="date-grid">
+      <a class="date-card" href="https://www.google.com/search?q=Asbury+Park+beach+NJ" target="_blank" rel="noopener">
+        <div class="ribbon">Boardwalk</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=70" alt="Asbury Park Beach"></div>
+        <div class="num">№ 01 / Asbury</div><h3>Asbury Park Beach</h3>
+        <p class="desc">Boardwalk, vintage arcades, record shops, and great food. Stay till sunset, walk the boards, share a slice.</p>
+        <div class="addr">Asbury Park · 75 min away</div><div class="cta">Beach Pass →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=Sandy+Hook+beach+NJ" target="_blank" rel="noopener">
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=70" alt="Sandy Hook Beach"></div>
+        <div class="num">№ 02 / Sandy Hook</div><h3>Sandy Hook Gateway</h3>
+        <p class="desc">Seven miles of ocean beaches, the lighthouse, and the quietest stretches of sand in NJ. Bring sunscreen & a cooler.</p>
+        <div class="addr">Highlands · 70 min away</div><div class="cta">Beach Pass →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=Ocean+Grove+beach+NJ" target="_blank" rel="noopener">
+        <div class="ribbon">Quiet</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=600&q=70" alt="Ocean Grove Beach"></div>
+        <div class="num">№ 03 / Ocean Grove</div><h3>Ocean Grove Beach</h3>
+        <p class="desc">Tiny Victorian beach town next to Asbury. Slower, quieter, more romantic. The tented auditorium is a vibe.</p>
+        <div class="addr">Ocean Grove · 75 min away</div><div class="cta">Beach Pass →</div>
+      </a>
+    </div>
+  </section>
+
+  <section id="picnic" class="tab-section" hidden>
+    <div class="section-head"><h2>Picnic Date</h2><div class="under">blanket · basket · us</div></div>
+    <div class="date-grid">
+      <a class="date-card" href="https://www.google.com/search?q=Branch+Brook+Park+Newark+NJ+cherry+blossoms" target="_blank" rel="noopener">
+        <div class="ribbon">Famous</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1527128539446-2009be6a6f23?w=600&q=70" alt="Branch Brook Park"></div>
+        <div class="num">№ 01 / Newark</div><h3>Branch Brook Park</h3>
+        <p class="desc">Largest cherry blossom collection in the US. Wide lawns, ponds, historic bridges. Bring cheese, baguettes, sparkling lemonade.</p>
+        <div class="addr">Newark · Essex County</div><div class="cta">Map It →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=Echo+Lake+Park+Mountainside+NJ+picnic" target="_blank" rel="noopener">
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=600&q=70" alt="Echo Lake Park"></div>
+        <div class="num">№ 02 / Mountainside</div><h3>Echo Lake Park</h3>
+        <p class="desc">Lake, paddle boats, tree-lined paths. Pick a shady spot by the water, lay out the blanket, stay till the fireflies.</p>
+        <div class="addr">Mountainside · Union County</div><div class="cta">Map It →</div>
+      </a>
+      <a class="date-card" href="https://www.google.com/search?q=South+Mountain+Reservation+picnic+area" target="_blank" rel="noopener">
+        <div class="ribbon">Wooded</div>
+        <div class="photo-wrap"><img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=70" alt="South Mountain Reservation"></div>
+        <div class="num">№ 03 / Maplewood</div><h3>South Mountain Reservation</h3>
+        <p class="desc">2,100 acres of forest, waterfall hikes, and quiet picnic clearings. Wildflower meadows in mid-summer — pack the camera.</p>
+        <div class="addr">Maplewood · Essex County</div><div class="cta">Map It →</div>
+      </a>
+    </div>
+  </section>
+
+  <section id="book" class="tab-section" hidden>
+    <div class="photo-book">
+      <div class="book-label">— Drea & Shaq's Summer Photo Book · 2026 —</div>
+      <div class="book-header">
+        <h2>Our Summer, Page by Page</h2>
+        <p>Add photos as the summer goes — then print it all at the end.</p>
+      </div>
+      <div class="book-tools">
+        <button class="tool-btn primary" id="add-photos-btn">＋ Add Photos</button>
+        <button class="tool-btn danger" id="export-pdf-btn">✦ The Summer's Over</button>
+        <button class="tool-btn ghost" id="clear-book-btn">Clear Book</button>
+        <input type="file" id="file-input" accept="image/*" multiple>
+      </div>
+      <div id="book-empty" class="book-empty">
+        <span class="big-heart">♡</span>
+        This photo book is empty.<br>Add a photo to start the summer.
+      </div>
+      <div class="photo-grid" id="photo-grid"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span class="heart-big">♥</span>
+  <p>Drea & Shaq, made with love.</p>
+  <p class="small">A Retro Love Story · 2026 · Essex + Union County, NJ</p>
+</footer>
+
+<div class="modal-overlay" id="caption-modal">
+  <div class="modal">
+    <h3>Describe this memory</h3>
+    <label for="caption-input">Caption</label>
+    <input type="text" id="caption-input" placeholder="e.g. our first beach day" maxlength="40">
+    <label for="date-input">Date</label>
+    <input type="date" id="date-input">
+    <div class="modal-btns">
+      <button class="tool-btn" id="caption-skip">Skip</button>
+      <button class="tool-btn primary" id="caption-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+const tabs = document.querySelectorAll('.tab');
+const sections = document.querySelectorAll('.tab-section');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = tab.dataset.target;
+    sections.forEach(s => s.hidden = (s.id !== target));
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+const bgHearts = document.getElementById('bg-hearts');
+const heartChars = ['♥', '♡', '✿', '❀', '★'];
+for (let i = 0; i < 14; i++) {
+  const h = document.createElement('span');
+  h.className = 'bg-heart';
+  h.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
+  h.style.left = Math.random() * 100 + '%';
+  h.style.fontSize = (14 + Math.random() * 24) + 'px';
+  h.style.animationDuration = (18 + Math.random() * 14) + 's';
+  h.style.animationDelay = (-Math.random() * 22) + 's';
+  h.style.color = ['#ff3d7f', '#d62828', '#ffd166', '#f48fb1'][Math.floor(Math.random() * 4)];
+  bgHearts.appendChild(h);
+}
+
+function toast(message, icon = '♥') {
+  const wrap = document.getElementById('toast-wrap');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span class="ic">${icon}</span> <span>${message}</span>`;
+  wrap.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => t.remove(), 500);
+  }, 3200);
+}
+
+const STORAGE_KEY = 'drea-shaq-summer-2026-photos';
+let photos = [];
+let pendingFile = null;
+
+function loadPhotos() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) photos = JSON.parse(stored);
+  } catch (e) { photos = []; }
+}
+
+function savePhotos() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
+  } catch (e) {
+    toast('Storage full — try fewer/smaller photos.', '!');
+  }
+}
+
+function renderBook() {
+  const grid = document.getElementById('photo-grid');
+  const empty = document.getElementById('book-empty');
+  grid.innerHTML = '';
+  if (photos.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  photos.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'book-photo';
+    card.style.animationDelay = (i * 0.05) + 's';
+    card.innerHTML = `
+      <span class="bp-tape"></span>
+      <span class="bp-date">${p.date || 'summer'}</span>
+      <img src="${p.src}" alt="${p.caption || 'us'}">
+      <div class="bp-caption">${p.caption || 'us, this summer'}</div>
+      <button class="bp-remove" data-i="${i}" aria-label="Remove photo">×</button>
+    `;
+    grid.appendChild(card);
+  });
+  grid.querySelectorAll('.bp-remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const i = parseInt(btn.dataset.i);
+      photos.splice(i, 1);
+      savePhotos();
+      renderBook();
+      toast('Photo removed.', '✕');
+    });
+  });
+}
+
+document.getElementById('add-photos-btn').addEventListener('click', () => {
+  document.getElementById('file-input').click();
+});
+
+document.getElementById('file-input').addEventListener('change', (e) => {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  files.forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxW = 900;
+        const scale = Math.min(1, maxW / img.width);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        pendingFile = dataUrl;
+        openCaptionModal();
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+});
+
+function openCaptionModal() {
+  const m = document.getElementById('caption-modal');
+  document.getElementById('caption-input').value = '';
+  document.getElementById('date-input').value = new Date().toISOString().slice(0, 10);
+  m.classList.add('show');
+  setTimeout(() => document.getElementById('caption-input').focus(), 100);
+}
+
+function closeCaptionModal() {
+  document.getElementById('caption-modal').classList.remove('show');
+  pendingFile = null;
+}
+
+document.getElementById('caption-skip').addEventListener('click', () => {
+  if (pendingFile) {
+    photos.push({ src: pendingFile, caption: '', date: '' });
+    savePhotos();
+    renderBook();
+    toast('Added to the book!', '♥');
+  }
+  closeCaptionModal();
+});
+
+document.getElementById('caption-save').addEventListener('click', () => {
+  const caption = document.getElementById('caption-input').value.trim();
+  const date = document.getElementById('date-input').value;
+  if (pendingFile) {
+    photos.push({ src: pendingFile, caption, date });
+    savePhotos();
+    renderBook();
+    toast('Added to the book!', '♥');
+  }
+  closeCaptionModal();
+});
+
+document.getElementById('caption-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'caption-modal') closeCaptionModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeCaptionModal();
+});
+
+document.getElementById('clear-book-btn').addEventListener('click', () => {
+  if (photos.length === 0) { toast('Book is already empty.', '✓'); return; }
+  if (confirm('Clear all photos from the book? This cannot be undone.')) {
+    photos = [];
+    savePhotos();
+    renderBook();
+    toast('Photo book cleared.', '✕');
+  }
+});
+
+document.getElementById('export-pdf-btn').addEventListener('click', async () => {
+  if (photos.length === 0) { toast('Add some photos first!', '!'); return; }
+  await generateVintagePhotoBookPDF();
+});
+
+async function generateVintagePhotoBookPDF() {
+  toast('Building your photo book…', '✦');
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ unit: 'pt', format: 'letter' });
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+  const margin = 48;
+
+  const loaded = [];
+  for (let i = 0; i < photos.length; i++) {
+    const p = photos[i];
+    try {
+      const dim = await loadImageDimension(p.src);
+      loaded.push({ ...p, ...dim });
+    } catch (e) {}
+  }
+
+  paintCreamPage(pdf, pageW, pageH);
+  paintPaperTexture(pdf, pageW, pageH);
+  paintHalftoneCorner(pdf, pageW, pageH);
+
+  pdf.setDrawColor(160, 30, 30);
+  pdf.setLineWidth(2);
+  pdf.rect(margin, margin, pageW - margin * 2, pageH - margin * 2);
+  pdf.setLineWidth(0.6);
+  pdf.rect(margin + 8, margin + 8, pageW - margin * 2 - 16, pageH - margin * 2 - 16);
+
+  pdf.setFont('times', 'italic');
+  pdf.setTextColor(42, 14, 14);
+  pdf.setFontSize(20);
+  pdf.text('a summer of', pageW / 2, pageH * 0.26, { align: 'center' });
+
+  pdf.setFont('times', 'bolditalic');
+  pdf.setFontSize(56);
+  pdf.text('RETRO LOVE', pageW / 2, pageH * 0.34, { align: 'center' });
+
+  pdf.setFont('times', 'italic');
+  pdf.setFontSize(22);
+  pdf.text("— Drea & Shaq's Photo Book —", pageW / 2, pageH * 0.41, { align: 'center' });
+
+  drawHeart(pdf, pageW / 2, pageH * 0.55, 28, [214, 40, 40]);
+
+  pdf.setFont('courier', 'normal');
+  pdf.setFontSize(12);
+  pdf.setTextColor(74, 31, 31);
+  pdf.text('ESSEX + UNION COUNTY  ·  NEW JERSEY', pageW / 2, pageH * 0.68, { align: 'center' });
+  pdf.text('SUMMER · 2026', pageW / 2, pageH * 0.71, { align: 'center' });
+
+  pdf.setDrawColor(160, 30, 30);
+  pdf.setLineWidth(1.4);
+  pdf.setLineDashPattern([3, 2], 0);
+  pdf.roundedRect(pageW / 2 - 70, pageH * 0.78, 140, 36, 4, 4, 'S');
+  pdf.setLineDashPattern([], 0);
+  pdf.setFont('courier', 'bold');
+  pdf.setFontSize(11);
+  pdf.setTextColor(160, 30, 30);
+  pdf.text('POSTED WITH LOVE', pageW / 2, pageH * 0.78 + 22, { align: 'center' });
+
+  pdf.setFont('courier', 'normal');
+  pdf.setFontSize(9);
+  pdf.setTextColor(120, 80, 60);
+  pdf.text('volume 1  ·  edition of one  ·  printed with care', pageW / 2, pageH - 60, { align: 'center' });
+
+  const perPage = 4;
+  const totalPages = Math.ceil(loaded.length / perPage);
+
+  for (let pg = 0; pg < totalPages; pg++) {
+    pdf.addPage();
+    paintCreamPage(pdf, pageW, pageH);
+    paintPaperTexture(pdf, pageW, pageH);
+
+    pdf.setFont('times', 'italic');
+    pdf.setFontSize(14);
+    pdf.setTextColor(74, 31, 31);
+    pdf.text('summer memories', margin + 4, margin + 4);
+    pdf.text(`page ${pg + 1}`, pageW - margin - 4, margin + 4, { align: 'right' });
+    pdf.setDrawColor(120, 80, 60);
+    pdf.setLineWidth(0.4);
+    pdf.line(margin, margin + 12, pageW - margin, margin + 12);
+
+    const slice = loaded.slice(pg * perPage, pg * perPage + perPage);
+    const slots = [
+      { x: margin + 12,           y: margin + 50,            w: (pageW - margin * 2 - 36) / 2 },
+      { x: margin + 24 + (pageW - margin * 2 - 36) / 2, y: margin + 50,            w: (pageW - margin * 2 - 36) / 2 },
+      { x: margin + 12,           y: pageH / 2 + 24,         w: (pageW - margin * 2 - 36) / 2 },
+      { x: margin + 24 + (pageW - margin * 2 - 36) / 2, y: pageH / 2 + 24,         w: (pageW - margin * 2 - 36) / 2 }
+    ];
+
+    slice.forEach((p, i) => {
+      const s = slots[i];
+      const ratio = p.height / p.width;
+      const availW = s.w - 32;
+      const availH = (pageH / 2 - 60 - margin) - 50;
+      let dw, dh;
+      if (availW * ratio <= availH) { dw = availW; dh = availW * ratio; } 
+      else { dh = availH; dw = availH / ratio; }
+      const dx = s.x + (s.w - dw) / 2 + 6;
+      const dy = s.y + 8;
+
+      pdf.setFillColor(60, 30, 20);
+      pdf.rect(dx + 3, dy + 3, dw + 24, dh + 24, 'F');
+      pdf.setFillColor(250, 243, 224);
+      pdf.rect(dx, dy, dw + 24, dh + 24, 'F');
+      pdf.setDrawColor(180, 150, 110);
+      pdf.setLineWidth(0.4);
+      pdf.rect(dx + 6, dy + 6, dw + 12, dh + 12, 'S');
+
+      try {
+        const fmt = (p.src.indexOf('image/png') > -1) ? 'PNG' : 'JPEG';
+        pdf.addImage(p.src, fmt, dx + 12, dy + 12, dw, dh);
+      } catch (e) {}
+
+      pdf.setFillColor(255, 209, 102);
+      pdf.setGState(new pdf.GState({ opacity: 0.7 }));
+      const tw = 60, th = 14;
+      pdf.rect(dx + dw / 2 - tw / 2, dy - th / 2, tw, th, 'F');
+      pdf.setGState(new pdf.GState({ opacity: 1 }));
+
+      if (p.date) {
+        pdf.setFont('courier', 'normal');
+        pdf.setFontSize(8);
+        pdf.setTextColor(160, 30, 30);
+        pdf.text(p.date.toUpperCase(), dx + 4, dy + 14);
+      }
+
+      pdf.setFont('times', 'italic');
+      pdf.setFontSize(13);
+      pdf.setTextColor(42, 14, 14);
+      const caption = p.caption || 'us, this summer';
+      const captionLines = pdf.splitTextToSize(caption, dw + 12);
+      const baseY = dy + dh + 30;
+      captionLines.slice(0, 2).forEach((line, li) => {
+        pdf.text(line, dx + 12 + (dw) / 2, baseY + li * 14, { align: 'center' });
+      });
+    });
+  }
+
+  pdf.addPage();
+  paintCreamPage(pdf, pageW, pageH);
+  paintPaperTexture(pdf, pageW, pageH);
+  paintHalftoneCorner(pdf, pageW, pageH);
+
+  pdf.setDrawColor(160, 30, 30);
+  pdf.setLineWidth(2);
+  pdf.rect(margin, margin, pageW - margin * 2, pageH - margin * 2);
+
+  drawHeart(pdf, pageW / 2, pageH * 0.42, 36, [214, 40, 40]);
+
+  pdf.setFont('times', 'italic');
+  pdf.setFontSize(28);
+  pdf.setTextColor(42, 14, 14);
+  pdf.text('the end of summer,', pageW / 2, pageH * 0.55, { align: 'center' });
+  pdf.text('but not of us.', pageW / 2, pageH * 0.59, { align: 'center' });
+
+  pdf.setFont('courier', 'normal');
+  pdf.setFontSize(11);
+  pdf.setTextColor(120, 80, 60);
+  pdf.text('printed with love  ·  summer 2026', pageW / 2, pageH * 0.72, { align: 'center' });
+
+  pdf.setFont('times', 'italic');
+  pdf.setFontSize(16);
+  pdf.setTextColor(74, 31, 31);
+  pdf.text('— for Drea —', pageW / 2, pageH * 0.78, { align: 'center' });
+
+  pdf.save('Summer-of-Love-2026-Drea-Shaq.pdf');
+  toast('Photo book saved! Print & bind it. ♥', '✦');
+}
+
+function loadImageDimension(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+function paintCreamPage(pdf, w, h) {
+  pdf.setFillColor(243, 229, 204);
+  pdf.rect(0, 0, w, h, 'F');
+}
+
+function paintPaperTexture(pdf, w, h) {
+  pdf.setFillColor(180, 140, 100);
+  pdf.setGState(new pdf.GState({ opacity: 0.07 }));
+  for (let i = 0; i < 600; i++) {
+    const x = Math.random() * w;
+    const y = Math.random() * h;
+    pdf.circle(x, y, 0.4, 'F');
+  }
+  pdf.setGState(new pdf.GState({ opacity: 1 }));
+}
+
+function paintHalftoneCorner(pdf, w, h) {
+  pdf.setFillColor(214, 40, 40);
+  pdf.setGState(new pdf.GState({ opacity: 0.18 }));
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const x = 30 + c * 10;
+      const y = 30 + r * 10;
+      const dist = Math.sqrt(r * r + c * c);
+      if (dist > 7) continue;
+      pdf.circle(x, y, 1.2 + (7 - dist) * 0.3, 'F');
+    }
+  }
+  pdf.setGState(new pdf.GState({ opacity: 1 }));
+}
+
+function drawHeart(pdf, cx, cy, size, color) {
+  pdf.setFillColor(color[0], color[1], color[2]);
+  const s = size;
+  const segments = 40;
+  const pts = [];
+  for (let i = 0; i <= segments; i++) {
+    const t = (i / segments) * Math.PI * 2;
+    const x = cx + 16 * Math.pow(Math.sin(t), 3) * (s / 16);
+    const y = cy - (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * (s / 16);
+    pts.push([x, y]);
+  }
+  pdf.lines(
+    pts.slice(1).map((p, i) => [p[0] - pts[i][0], p[1] - pts[i][1]]),
+    pts[0][0], pts[0][1], [1, 1], 'F', true
+  );
+}
+
+loadPhotos();
+renderBook();
+
+setTimeout(() => { toast('Welcome, Drea. ♥', '♥'); }, 800);
+</script>
+
+</body>
+</html>
