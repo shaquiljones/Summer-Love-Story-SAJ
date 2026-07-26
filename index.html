@@ -266,6 +266,9 @@ body {
 .idea-fallback { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, var(--pink) 0%, var(--butter) 100%); }
 .idea-fallback-icon { font-size: 34px; color: var(--tomato-dark); }
 .idea-fallback-text { font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-2); }
+.idea-media.poster { aspect-ratio: 2/3; }
+.idea-card.movie-watched { opacity: 0.75; }
+.idea-card.movie-watched .idea-media::before { content: '✓ WATCHED'; position: absolute; z-index: 4; top: 10px; right: 10px; background: var(--teal); color: white; font-family: 'Special Elite', monospace; font-size: 10px; letter-spacing: 0.12em; padding: 4px 9px; box-shadow: 2px 2px 0 var(--ink); transform: rotate(3deg); }
 .idea-body { padding: 16px 18px 20px; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
 .idea-title { font-family: 'Shrikhand', cursive; font-size: 18px; color: var(--ink); line-height: 1.15; }
 .idea-date { font-family: 'Special Elite', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--tomato); }
@@ -373,6 +376,7 @@ body {
     <a class="tab" data-target="calendar"><span class="tab-no">09</span><span class="tab-icon">▦</span> Calendar</a>
     <a class="tab tab-add" data-target="book"><span class="tab-no">10</span><span class="tab-icon">♡</span> Photo Book</a>
     <a class="tab tab-idea" data-target="add-activity"><span class="tab-no">11</span><span class="tab-icon">♡</span> Add Activity</a>
+    <a class="tab tab-idea" data-target="movie-list"><span class="tab-no">12</span><span class="tab-icon">▶</span> Movie List</a>
   </div>
 </nav>
 
@@ -462,47 +466,83 @@ body {
     </div>
   </section>
 
-  <!-- RESTAURANTS (STARTS EMPTY) -->
+  <!-- RESTAURANTS (STARTS EMPTY, SYNCED) -->
   <section id="restaurants" class="tab-section" hidden>
     <div class="section-head"><h2>Date Night Eats</h2><div class="under">appetizers · entrees · us</div></div>
-    
-    <div class="add-card-form">
-      <h3>Add a Restaurant</h3>
-      <div class="form-row">
-        <input type="text" id="rest-name" class="form-input" placeholder="Restaurant Name">
-        <input type="text" id="rest-addr" class="form-input" placeholder="Town / Area">
-      </div>
-      <div class="form-row">
-        <input type="text" id="rest-desc" class="form-input" placeholder="Why it's good (short description)">
-        <input type="url" id="rest-link" class="form-input" placeholder="Website URL (for thumbnail & link)">
-      </div>
-      <button class="tool-btn primary" id="add-rest-btn">＋ Add to List</button>
+
+    <div id="rest-locked" class="board-lock-card">
+      <span class="lock-heart">♡</span>
+      <h3>Enter our shared board code to see and add eats.</h3>
+      <p class="lock-sub">Same code as the Add Activity board.</p>
+      <form id="rest-unlock-form" class="unlock-form">
+        <input type="password" id="rest-key-input" placeholder="Board code" autocomplete="off" required>
+        <button type="submit" class="tool-btn primary">Unlock</button>
+      </form>
+      <div id="rest-unlock-error" class="board-error" hidden></div>
     </div>
 
-    <div id="rest-empty" class="rest-empty">
-      <span class="big-icon">✁</span>
-      Your eat list is empty.<br>Add a restaurant to start the list!
-    </div>
+    <div id="rest-unlocked" class="board-unlocked" hidden>
+      <div class="board-toolbar">
+        <span id="rest-sync-status" class="sync-status">● synced</span>
+        <button type="button" id="rest-lock-btn" class="tool-btn ghost small">Lock this device</button>
+      </div>
 
-    <div class="date-grid" id="rest-grid"></div>
+      <div class="add-card-form">
+        <h3>Add a Restaurant</h3>
+        <div class="form-row">
+          <input type="text" id="rest-name" class="form-input" placeholder="Restaurant Name">
+          <input type="text" id="rest-addr" class="form-input" placeholder="Town / Area">
+        </div>
+        <div class="form-row">
+          <input type="text" id="rest-desc" class="form-input" placeholder="Why it's good (short description)">
+          <input type="url" id="rest-link" class="form-input" placeholder="Website URL (for thumbnail & link)">
+        </div>
+        <button class="tool-btn primary" id="add-rest-btn">＋ Add to List</button>
+      </div>
+
+      <div id="rest-empty" class="rest-empty">
+        <span class="big-icon">✁</span>
+        Your eat list is empty.<br>Add a restaurant to start the list!
+      </div>
+
+      <div class="date-grid" id="rest-grid"></div>
+    </div>
   </section>
 
-  <!-- CALENDAR -->
+  <!-- CALENDAR (SYNCED) -->
   <section id="calendar" class="tab-section" hidden>
     <div class="section-head"><h2>Our Summer Calendar</h2><div class="under">plan · it · all</div></div>
-    
-    <div class="cal-header">
-      <button class="cal-nav" id="cal-prev">◄ Prev</button>
-      <h3 id="cal-month-year"></h3>
-      <button class="cal-nav" id="cal-next">Next ►</button>
+
+    <div id="cal-locked" class="board-lock-card">
+      <span class="lock-heart">♡</span>
+      <h3>Enter our shared board code to see and add events.</h3>
+      <p class="lock-sub">Same code as the Add Activity board.</p>
+      <form id="cal-unlock-form" class="unlock-form">
+        <input type="password" id="cal-key-input" placeholder="Board code" autocomplete="off" required>
+        <button type="submit" class="tool-btn primary">Unlock</button>
+      </form>
+      <div id="cal-unlock-error" class="board-error" hidden></div>
     </div>
 
-    <div class="cal-grid" id="cal-grid">
-      <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div><div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>
+    <div id="cal-unlocked" class="board-unlocked" hidden>
+      <div class="board-toolbar">
+        <span id="cal-sync-status" class="sync-status">● synced</span>
+        <button type="button" id="cal-lock-btn" class="tool-btn ghost small">Lock this device</button>
+      </div>
+
+      <div class="cal-header">
+        <button class="cal-nav" id="cal-prev">◄ Prev</button>
+        <h3 id="cal-month-year"></h3>
+        <button class="cal-nav" id="cal-next">Next ►</button>
+      </div>
+
+      <div class="cal-grid" id="cal-grid">
+        <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div><div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>
+      </div>
     </div>
   </section>
 
-  <!-- PHOTO BOOK -->
+  <!-- PHOTO BOOK (SYNCED) -->
   <section id="book" class="tab-section" hidden>
     <div class="photo-book">
       <div class="book-label">— Drea & Shaq's Summer Photo Book · 2026 —</div>
@@ -510,14 +550,85 @@ body {
         <h2>Our Summer, Page by Page</h2>
         <p>Add photos as the summer goes — then print it all at the end.</p>
       </div>
-      <div class="book-tools">
-        <button class="tool-btn primary" id="add-photos-btn">＋ Add Photos</button>
-        <button class="tool-btn danger" id="export-pdf-btn">✦ The Summer's Over</button>
-        <button class="tool-btn ghost" id="clear-book-btn">Clear Book</button>
-        <input type="file" id="file-input" accept="image/*" multiple>
+
+      <div id="book-locked" class="board-lock-card">
+        <span class="lock-heart">♡</span>
+        <h3>Enter our shared board code to see and add photos.</h3>
+        <p class="lock-sub">Same code as the Add Activity board.</p>
+        <form id="book-unlock-form" class="unlock-form">
+          <input type="password" id="book-key-input" placeholder="Board code" autocomplete="off" required>
+          <button type="submit" class="tool-btn primary">Unlock</button>
+        </form>
+        <div id="book-unlock-error" class="board-error" hidden></div>
       </div>
-      <div id="book-empty" class="book-empty"><span class="big-heart">♡</span>This photo book is empty.<br>Add a photo to start the summer.</div>
-      <div class="photo-grid" id="photo-grid"></div>
+
+      <div id="book-unlocked" class="board-unlocked" hidden>
+        <div class="board-toolbar">
+          <span id="book-sync-status" class="sync-status">● synced</span>
+          <button type="button" id="book-lock-btn" class="tool-btn ghost small">Lock this device</button>
+        </div>
+        <div class="book-tools">
+          <button class="tool-btn primary" id="add-photos-btn">＋ Add Photos</button>
+          <button class="tool-btn danger" id="export-pdf-btn">✦ The Summer's Over</button>
+          <button class="tool-btn ghost" id="clear-book-btn">Clear Book</button>
+          <input type="file" id="file-input" accept="image/*" multiple>
+        </div>
+        <div id="book-empty" class="book-empty"><span class="big-heart">♡</span>This photo book is empty.<br>Add a photo to start the summer.</div>
+        <div class="photo-grid" id="photo-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOVIE LIST (SYNCED) -->
+  <section id="movie-list" class="tab-section" hidden>
+    <div class="section-head"><h2>Our Movie List</h2><div class="under">popcorn · blankets · us</div></div>
+
+    <div id="movie-locked" class="board-lock-card">
+      <span class="lock-heart">♡</span>
+      <h3>Enter our shared board code to see and add movies.</h3>
+      <p class="lock-sub">Same code as the Add Activity board.</p>
+      <form id="movie-unlock-form" class="unlock-form">
+        <input type="password" id="movie-key-input" placeholder="Board code" autocomplete="off" required>
+        <button type="submit" class="tool-btn primary">Unlock</button>
+      </form>
+      <div id="movie-unlock-error" class="board-error" hidden></div>
+    </div>
+
+    <div id="movie-unlocked" class="board-unlocked" hidden>
+      <div class="board-toolbar">
+        <span id="movie-sync-status" class="sync-status">● synced</span>
+        <button type="button" id="movie-lock-btn" class="tool-btn ghost small">Lock this device</button>
+      </div>
+
+      <form id="movie-form" class="idea-form">
+        <div class="pin"></div>
+        <h3>Add a Movie</h3>
+        <label for="movie-title">Movie title</label>
+        <input type="text" id="movie-title" maxlength="150" required placeholder="e.g. The Notebook">
+        <div class="idea-form-row">
+          <div>
+            <label for="movie-who">Added by</label>
+            <select id="movie-who">
+              <option value="">Choose…</option>
+              <option value="Shaq">Shaq</option>
+              <option value="Drea">Drea</option>
+            </select>
+          </div>
+          <div></div>
+        </div>
+        <div id="movie-form-error" class="board-error" hidden></div>
+        <button type="submit" class="tool-btn primary" id="movie-save-btn">Add to List ♡</button>
+      </form>
+
+      <div class="board-grid-head">
+        <h3>Our Movie List</h3>
+        <span id="movie-refresh-indicator" class="refresh-dot" hidden>refreshing…</span>
+      </div>
+      <div id="movie-empty" class="book-empty" hidden>
+        <span class="big-heart">♡</span>
+        No movies yet — add the first one above!
+      </div>
+      <div class="idea-grid" id="movie-grid"></div>
     </div>
   </section>
 
@@ -634,6 +745,193 @@ body {
    Drea & Shaq · Summer 2026 — A Retro Love Story (v2.1)
    ============================================================ */
 
+// ----- SHARED SYNC SETUP (Add Activity, Photo Book, Calendar, Eats, Movie List) -----
+// Every synced feature reuses the same backend function and the same shared
+// board code (stored once in sessionStorage) so unlocking on any one tab
+// unlocks all of them for the rest of that browser session.
+const BOARD_FUNCTION_URL = 'https://zhvoyvjpytauobqdszkm.supabase.co/functions/v1/love-date-board';
+const BOARD_KEY_STORAGE = 'summer-love-board-key';
+const BOARD_POLL_MS = 20000;
+
+function showFieldError(el, message) {
+  if (!el) return;
+  el.textContent = message;
+  el.hidden = false;
+}
+
+function hideFieldError(el) {
+  if (!el) return;
+  el.hidden = true;
+  el.textContent = '';
+}
+
+function isValidHttpUrl(value) {
+  try {
+    const u = new URL(value);
+    return u.protocol === 'https:' || u.protocol === 'http:';
+  } catch (e) { return false; }
+}
+
+function buildFallbackMedia(label) {
+  const fallback = document.createElement('div');
+  fallback.className = 'idea-fallback';
+  const icon = document.createElement('span');
+  icon.className = 'idea-fallback-icon';
+  icon.textContent = '♡';
+  const text = document.createElement('span');
+  text.className = 'idea-fallback-text';
+  text.textContent = label;
+  fallback.appendChild(icon);
+  fallback.appendChild(text);
+  return fallback;
+}
+
+// Generic sync engine used by Photo Book, Calendar, Eats, and Movie List.
+// (Add Activity keeps its own original, hand-built implementation below —
+// left untouched — but reads/writes this same BOARD_KEY_STORAGE key.)
+function createSyncedResource(cfg) {
+  const state = { key: null, items: [], pollTimer: null, active: false, fetchInFlight: false, lastFetchAt: 0 };
+  const MIN_REFETCH_MS = 4000;
+
+  function resourceUrl(params) {
+    const u = new URL(BOARD_FUNCTION_URL);
+    u.searchParams.set('type', cfg.type);
+    if (params) Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, v));
+    return u.toString();
+  }
+
+  function showLocked() { cfg.lockedEl.hidden = false; cfg.unlockedEl.hidden = true; }
+  function showUnlocked() { cfg.lockedEl.hidden = true; cfg.unlockedEl.hidden = false; }
+
+  function init() {
+    const stored = sessionStorage.getItem(BOARD_KEY_STORAGE);
+    if (stored) {
+      state.key = stored;
+      showUnlocked();
+      fetchList();
+      startPolling();
+    } else {
+      showLocked();
+    }
+  }
+
+  async function fetchList(opts) {
+    opts = opts || {};
+    if (!state.key || state.fetchInFlight) return;
+    if (opts.silent && Date.now() - state.lastFetchAt < MIN_REFETCH_MS) return;
+    state.lastFetchAt = Date.now();
+    state.fetchInFlight = true;
+    if (cfg.refreshIndicatorEl && opts.silent) cfg.refreshIndicatorEl.hidden = false;
+    if (cfg.syncStatusEl) cfg.syncStatusEl.textContent = '● syncing…';
+    try {
+      const res = await fetch(resourceUrl(), { headers: { 'x-activity-board-key': state.key } });
+      if (res.status === 401) {
+        sessionStorage.removeItem(BOARD_KEY_STORAGE);
+        state.key = null;
+        stopPolling();
+        showLocked();
+        if (cfg.unlockError) showFieldError(cfg.unlockError, 'Your board code stopped working. Please enter it again.');
+        return;
+      }
+      if (!res.ok) { if (cfg.syncStatusEl) cfg.syncStatusEl.textContent = '● offline'; return; }
+      const data = await res.json();
+      state.items = Array.isArray(data[cfg.listKey]) ? data[cfg.listKey] : [];
+      if (cfg.sortFn) state.items.sort(cfg.sortFn);
+      cfg.onList(state.items);
+      if (cfg.syncStatusEl) cfg.syncStatusEl.textContent = '● synced';
+    } catch (err) {
+      if (cfg.syncStatusEl) cfg.syncStatusEl.textContent = '● offline';
+    } finally {
+      state.fetchInFlight = false;
+      if (cfg.refreshIndicatorEl) cfg.refreshIndicatorEl.hidden = true;
+    }
+  }
+
+  function startPolling() {
+    stopPolling();
+    state.pollTimer = setInterval(() => {
+      if (state.active && state.key && document.visibilityState === 'visible') fetchList({ silent: true });
+    }, BOARD_POLL_MS);
+  }
+  function stopPolling() { if (state.pollTimer) { clearInterval(state.pollTimer); state.pollTimer = null; } }
+
+  async function add(body) {
+    const payload = typeof body === 'string' ? body : JSON.stringify(body);
+    const res = await fetch(resourceUrl(), {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-activity-board-key': state.key },
+      body: payload,
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  }
+
+  async function patch(id, body) {
+    const res = await fetch(resourceUrl({ id }), {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json', 'x-activity-board-key': state.key },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  }
+
+  async function remove(id) {
+    const res = await fetch(resourceUrl({ id }), { method: 'DELETE', headers: { 'x-activity-board-key': state.key } });
+    return res.ok;
+  }
+
+  cfg.unlockForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const key = cfg.unlockInput.value.trim();
+    hideFieldError(cfg.unlockError);
+    if (!key) return;
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true; btn.textContent = 'Checking…';
+    try {
+      const res = await fetch(resourceUrl(), { headers: { 'x-activity-board-key': key } });
+      if (res.status === 401) { showFieldError(cfg.unlockError, "That board code didn't match. Try again."); return; }
+      if (!res.ok) { showFieldError(cfg.unlockError, 'Could not reach the board. Check your connection and try again.'); return; }
+      const data = await res.json();
+      state.key = key;
+      sessionStorage.setItem(BOARD_KEY_STORAGE, key);
+      state.items = Array.isArray(data[cfg.listKey]) ? data[cfg.listKey] : [];
+      if (cfg.sortFn) state.items.sort(cfg.sortFn);
+      cfg.unlockInput.value = '';
+      showUnlocked();
+      cfg.onList(state.items);
+      startPolling();
+      toast('Unlocked ♡', '♡');
+    } catch (err) {
+      showFieldError(cfg.unlockError, 'Could not reach the board. Check your connection and try again.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Unlock';
+    }
+  });
+
+  if (cfg.lockBtn) {
+    cfg.lockBtn.addEventListener('click', () => {
+      sessionStorage.removeItem(BOARD_KEY_STORAGE);
+      state.key = null;
+      state.items = [];
+      stopPolling();
+      showLocked();
+      cfg.onList(state.items);
+      toast('Locked on this device.', '♡');
+    });
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && state.active && state.key) fetchList({ silent: true });
+  });
+
+  return {
+    state, fetchList, add, patch, remove,
+    setActive(v) { state.active = v; if (v) init(); else stopPolling(); },
+  };
+}
+
 // ----- TAB SWITCHING -----
 const tabs = document.querySelectorAll('.tab');
 const sections = document.querySelectorAll('.tab-section');
@@ -652,6 +950,11 @@ tabs.forEach(tab => {
     } else {
       stopBoardPolling();
     }
+
+    photoSync.setActive(target === 'book');
+    calSync.setActive(target === 'calendar');
+    restSync.setActive(target === 'restaurants');
+    movieSync.setActive(target === 'movie-list');
   });
 });
 
@@ -703,22 +1006,18 @@ genericModal.addEventListener('click', (e) => { if (e.target.id === 'generic-mod
 
 
 // ============================================================
-//  RESTAURANTS (Starts Empty, Custom Add)
+//  RESTAURANTS (Eats — synced, shared across devices)
 // ============================================================
-const REST_STORAGE = 'drea-shaq-restaurants';
-let customRests = [];
-try { customRests = JSON.parse(localStorage.getItem(REST_STORAGE)) || []; } catch(e) { customRests = []; }
-function saveRests() { try { localStorage.setItem(REST_STORAGE, JSON.stringify(customRests)); } catch(e) {} }
-
 function renderCustomRests() {
   const grid = document.getElementById('rest-grid');
   const emptyMsg = document.getElementById('rest-empty');
   grid.innerHTML = '';
-  
-  if (customRests.length === 0) { emptyMsg.style.display = 'block'; return; }
+  const list = restSync.state.items;
+
+  if (list.length === 0) { emptyMsg.style.display = 'block'; return; }
   emptyMsg.style.display = 'none';
-  
-  customRests.forEach((r, i) => {
+
+  list.forEach((r) => {
     const card = document.createElement('a');
     card.className = 'date-card custom-card';
     card.href = r.link || '#';
@@ -726,35 +1025,40 @@ function renderCustomRests() {
     card.rel = 'noopener';
     const thumbUrl = r.link ? `https://image.thum.io/get/width/600/crop/450/${r.link}` : 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&q=70';
     card.innerHTML = `
-      <button class="del-btn" data-i="${i}">×</button>
+      <button class="del-btn" data-id="${r.id}">×</button>
       <div class="photo-wrap"><img src="${thumbUrl}" alt="${r.name}" onerror="this.src='https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600&q=70'"></div>
-      <div class="num">Custom · ${(i+1).toString().padStart(2,'0')}</div>
+      <div class="num">Custom</div>
       <h3>${r.name}</h3>
-      <p class="desc">${r.desc}</p>
-      <div class="addr">${r.addr}</div>
+      <p class="desc">${r.description || 'A spot we want to try!'}</p>
+      <div class="addr">${r.addr || 'NJ'}</div>
       <div class="cta">Visit →</div>
     `;
     grid.appendChild(card);
   });
 
   grid.querySelectorAll('.del-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       e.preventDefault(); e.stopPropagation();
-      customRests.splice(parseInt(btn.dataset.i), 1);
-      saveRests(); renderCustomRests();
+      const id = btn.dataset.id;
+      const okDel = await restSync.remove(id);
+      if (!okDel) { toast('Could not remove that restaurant.', '!'); return; }
+      restSync.state.items = restSync.state.items.filter((r) => r.id !== id);
+      renderCustomRests();
       toast('Restaurant removed.', '✕');
     });
   });
 }
 
-document.getElementById('add-rest-btn').addEventListener('click', () => {
+document.getElementById('add-rest-btn').addEventListener('click', async () => {
   const name = document.getElementById('rest-name').value.trim();
   const addr = document.getElementById('rest-addr').value.trim();
   const desc = document.getElementById('rest-desc').value.trim();
   const link = document.getElementById('rest-link').value.trim();
   if (!name) { toast('Please enter a restaurant name!', '!'); return; }
-  customRests.push({ name, addr: addr || 'NJ', desc: desc || 'A spot we want to try!', link });
-  saveRests(); renderCustomRests();
+  const { ok, data } = await restSync.add({ name, addr, description: desc, link });
+  if (!ok) { toast(data.error || 'Could not save that restaurant.', '!'); return; }
+  restSync.state.items.push(data.restaurant);
+  renderCustomRests();
   document.getElementById('rest-name').value = '';
   document.getElementById('rest-addr').value = '';
   document.getElementById('rest-desc').value = '';
@@ -762,24 +1066,30 @@ document.getElementById('add-rest-btn').addEventListener('click', () => {
   toast('Restaurant added!', '♥');
 });
 
-renderCustomRests();
+const restSync = createSyncedResource({
+  type: 'restaurants', listKey: 'restaurants',
+  lockedEl: document.getElementById('rest-locked'),
+  unlockedEl: document.getElementById('rest-unlocked'),
+  syncStatusEl: document.getElementById('rest-sync-status'),
+  refreshIndicatorEl: null,
+  lockBtn: document.getElementById('rest-lock-btn'),
+  unlockForm: document.getElementById('rest-unlock-form'),
+  unlockInput: document.getElementById('rest-key-input'),
+  unlockError: document.getElementById('rest-unlock-error'),
+  onList: renderCustomRests,
+});
 
 
 // ============================================================
-//  CALENDAR
+//  CALENDAR (synced, shared across devices)
 // ============================================================
-const CAL_STORAGE = 'drea-shaq-calendar';
-let calEvents = [];
-try { calEvents = JSON.parse(localStorage.getItem(CAL_STORAGE)) || []; } catch(e) { calEvents = []; }
-function saveCalEvents() { try { localStorage.setItem(CAL_STORAGE, JSON.stringify(calEvents)); } catch(e) {} }
-
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 
 function renderCalendar() {
   const grid = document.getElementById('cal-grid');
   const header = document.getElementById('cal-month-year');
-  
+
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   header.textContent = `${months[currentMonth]} ${currentYear}`;
 
@@ -799,22 +1109,22 @@ function renderCalendar() {
     const cell = document.createElement('div');
     cell.className = 'cal-day';
     const dateStr = `${currentYear}-${(currentMonth+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
-    
+
     if (today.getDate() === d && today.getMonth() === currentMonth && today.getFullYear() === currentYear) {
       cell.classList.add('today');
     }
 
     cell.innerHTML = `<div class="day-num">${d}</div>`;
-    
-    const dayEvents = calEvents.filter(e => e.date === dateStr);
-    dayEvents.forEach((evt, idx) => {
+
+    const dayEvents = calSync.state.items.filter(e => e.event_date === dateStr);
+    dayEvents.forEach((evt) => {
       const evtBtn = document.createElement('button');
-      const catClass = evt.cat === 'Date Night' ? 'date-evt' : evt.cat === 'Dinner' ? 'dinner-evt' : evt.cat === 'Fun/Outing' ? 'fun-evt' : 'trip-evt';
+      const catClass = evt.category === 'Date Night' ? 'date-evt' : evt.category === 'Dinner' ? 'dinner-evt' : evt.category === 'Fun/Outing' ? 'fun-evt' : 'trip-evt';
       evtBtn.className = `cal-event ${catClass}`;
-      evtBtn.textContent = `${evt.time || ''} ${evt.title}`;
+      evtBtn.textContent = `${evt.event_time || ''} ${evt.title}`;
       evtBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        showEventOptions(dateStr, idx);
+        showEventOptions(evt);
       });
       cell.appendChild(evtBtn);
     });
@@ -838,51 +1148,51 @@ function openAddEventModal(dateStr) {
       <option value="Trip">Trip</option>
     </select>
   `;
-  openModal(`Add Event — ${dateStr}`, bodyHTML, () => {
+  openModal(`Add Event — ${dateStr}`, bodyHTML, async () => {
     const title = document.getElementById('evt-title').value.trim();
     const time = document.getElementById('evt-time').value;
     const cat = document.getElementById('evt-cat').value;
     if (!title) { toast('Please enter an event title!', '!'); return; }
-    calEvents.push({ date: dateStr, title, time, cat });
-    saveCalEvents(); renderCalendar(); closeGenericModal();
+    const { ok, data } = await calSync.add({ eventDate: dateStr, title, eventTime: time, category: cat });
+    if (!ok) { toast(data.error || 'Could not save that event.', '!'); return; }
+    calSync.state.items.push(data.event);
+    renderCalendar(); closeGenericModal();
     toast('Event added!', '♥');
   });
 }
 
-function showEventOptions(dateStr, idx) {
-  const evt = calEvents.filter(e => e.date === dateStr)[idx];
-  if (!evt) return;
+function showEventOptions(evt) {
   const bodyHTML = `
-    <p style="font-family:'Space Grotesk';margin-bottom:14px;"><strong>${evt.title}</strong><br>${evt.time || 'No time set'} · ${evt.cat}</p>
+    <p style="font-family:'Space Grotesk';margin-bottom:14px;"><strong>${evt.title}</strong><br>${evt.event_time || 'No time set'} · ${evt.category}</p>
     <p style="font-family:'Special Elite';font-size:11px;letter-spacing:0.15em;color:var(--ink-2);margin-bottom:12px;">EXPORT TO CALENDAR:</p>
   `;
   openModal(evt.title, bodyHTML, () => {
     exportToICS(evt);
     closeGenericModal();
   }, 'Export .ICS');
-  
+
   const delBtn = document.createElement('button');
   delBtn.className = 'tool-btn danger';
   delBtn.textContent = 'Delete Event';
   delBtn.style.marginRight = 'auto';
-  delBtn.addEventListener('click', () => {
-    const allOnDay = calEvents.filter(e => e.date === dateStr);
-    const globalIdx = calEvents.indexOf(allOnDay[idx]);
-    if (globalIdx > -1) calEvents.splice(globalIdx, 1);
-    saveCalEvents(); renderCalendar(); closeGenericModal();
+  delBtn.addEventListener('click', async () => {
+    const okDel = await calSync.remove(evt.id);
+    if (!okDel) { toast('Could not remove that event.', '!'); return; }
+    calSync.state.items = calSync.state.items.filter((e) => e.id !== evt.id);
+    renderCalendar(); closeGenericModal();
     toast('Event deleted.', '✕');
   });
   document.querySelector('#generic-modal .modal-btns').prepend(delBtn);
 }
 
 function exportToICS(evt) {
-  const dateClean = evt.date.replace(/-/g, '');
-  const timeClean = (evt.time || '00:00').replace(/:/g, '') + '00';
-  const endDate = new Date(`${evt.date}T${evt.time || '00:00'}`);
+  const dateClean = evt.event_date.replace(/-/g, '');
+  const timeClean = (evt.event_time || '00:00').replace(/:/g, '') + '00';
+  const endDate = new Date(`${evt.event_date}T${evt.event_time || '00:00'}`);
   endDate.setHours(endDate.getHours() + 1);
   const endStr = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 
-  const icsContent = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//DreaAndShaq//Summer2026//EN\r\nBEGIN:VEVENT\r\nDTSTART:${dateClean}T${timeClean}\r\nDTEND:${endStr}\r\nSUMMARY:${evt.title}\r\nDESCRIPTION:${evt.cat} - Drea & Shaq Summer 2026\r\nEND:VEVENT\r\nEND:VCALENDAR`;
+  const icsContent = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//DreaAndShaq//Summer2026//EN\r\nBEGIN:VEVENT\r\nDTSTART:${dateClean}T${timeClean}\r\nDTEND:${endStr}\r\nSUMMARY:${evt.title}\r\nDESCRIPTION:${evt.category} - Drea & Shaq Summer 2026\r\nEND:VEVENT\r\nEND:VCALENDAR`;
 
   const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -907,56 +1217,53 @@ document.getElementById('cal-next').addEventListener('click', () => {
   renderCalendar();
 });
 
-renderCalendar();
+const calSync = createSyncedResource({
+  type: 'calendar', listKey: 'events',
+  lockedEl: document.getElementById('cal-locked'),
+  unlockedEl: document.getElementById('cal-unlocked'),
+  syncStatusEl: document.getElementById('cal-sync-status'),
+  refreshIndicatorEl: null,
+  lockBtn: document.getElementById('cal-lock-btn'),
+  unlockForm: document.getElementById('cal-unlock-form'),
+  unlockInput: document.getElementById('cal-key-input'),
+  unlockError: document.getElementById('cal-unlock-error'),
+  onList: renderCalendar,
+});
 
 
 // ============================================================
-//  PHOTO BOOK (Original preserved exactly)
+//  PHOTO BOOK (synced, shared across devices)
 // ============================================================
-const STORAGE_KEY = 'drea-shaq-summer-2026-photos';
-let photos = [];
 let pendingFile = null;
-
-function loadPhotos() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) photos = JSON.parse(stored);
-  } catch (e) { photos = []; }
-}
-
-function savePhotos() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
-  } catch (e) {
-    toast('Storage full — try fewer/smaller photos.', '!');
-  }
-}
+let pendingUploadQueue = [];
 
 function renderBook() {
   const grid = document.getElementById('photo-grid');
   const empty = document.getElementById('book-empty');
   grid.innerHTML = '';
-  if (photos.length === 0) { empty.style.display = 'block'; return; }
+  const list = photoSync.state.items;
+  if (list.length === 0) { empty.style.display = 'block'; return; }
   empty.style.display = 'none';
-  photos.forEach((p, i) => {
+  list.forEach((p, i) => {
     const card = document.createElement('div');
     card.className = 'book-photo';
     card.style.animationDelay = (i * 0.05) + 's';
     card.innerHTML = `
       <span class="bp-tape"></span>
-      <span class="bp-date">${p.date || 'summer'}</span>
-      <img src="${p.src}" alt="${p.caption || 'us'}">
+      <span class="bp-date">${p.taken_on || 'summer'}</span>
+      <img src="${p.src_url}" alt="${p.caption || 'us'}">
       <div class="bp-caption">${p.caption || 'us, this summer'}</div>
-      <button class="bp-remove" data-i="${i}" aria-label="Remove photo">×</button>
+      <button class="bp-remove" data-id="${p.id}" aria-label="Remove photo">×</button>
     `;
     grid.appendChild(card);
   });
   grid.querySelectorAll('.bp-remove').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       e.stopPropagation();
-      const i = parseInt(btn.dataset.i);
-      photos.splice(i, 1);
-      savePhotos();
+      const id = btn.dataset.id;
+      const okDel = await photoSync.remove(id);
+      if (!okDel) { toast('Could not remove that photo.', '!'); return; }
+      photoSync.state.items = photoSync.state.items.filter((p) => p.id !== id);
       renderBook();
       toast('Photo removed.', '✕');
     });
@@ -968,31 +1275,34 @@ document.getElementById('add-photos-btn').addEventListener('click', () => {
 });
 
 document.getElementById('file-input').addEventListener('change', (e) => {
-  const files = Array.from(e.target.files);
-  if (!files.length) return;
-  files.forEach(file => {
-    if (!file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const maxW = 900;
-        const scale = Math.min(1, maxW / img.width);
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-        pendingFile = dataUrl;
-        openCaptionModal();
-      };
-      img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
+  const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
   e.target.value = '';
+  if (!files.length) return;
+  pendingUploadQueue = pendingUploadQueue.concat(files);
+  if (!document.getElementById('caption-modal').classList.contains('show')) processNextPendingFile();
 });
+
+function processNextPendingFile() {
+  if (pendingUploadQueue.length === 0) return;
+  const file = pendingUploadQueue.shift();
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const maxW = 900;
+      const scale = Math.min(1, maxW / img.width);
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      pendingFile = canvas.toDataURL('image/jpeg', 0.82);
+      openCaptionModal();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
 
 function openCaptionModal() {
   const m = document.getElementById('caption-modal');
@@ -1005,23 +1315,33 @@ function openCaptionModal() {
 function closeCaptionModal() {
   document.getElementById('caption-modal').classList.remove('show');
   pendingFile = null;
+  processNextPendingFile();
 }
 
-document.getElementById('caption-skip').addEventListener('click', () => {
-  if (pendingFile) {
-    photos.push({ src: pendingFile, caption: '', date: '' });
-    savePhotos(); renderBook(); toast('Added to the book!', '♥');
-  }
+async function uploadPendingPhoto(caption, takenOn) {
+  if (!pendingFile) return;
+  const saveBtn = document.getElementById('caption-save');
+  const skipBtn = document.getElementById('caption-skip');
+  saveBtn.disabled = true; skipBtn.disabled = true;
+  saveBtn.textContent = 'Uploading…';
+  const { ok, data } = await photoSync.add({ imageBase64: pendingFile, caption, takenOn });
+  saveBtn.disabled = false; skipBtn.disabled = false;
+  saveBtn.textContent = 'Save';
+  if (!ok) { toast(data.error || 'Could not upload that photo.', '!'); return; }
+  photoSync.state.items.push(data.photo);
+  renderBook();
+  toast('Added to the book!', '♥');
+}
+
+document.getElementById('caption-skip').addEventListener('click', async () => {
+  if (pendingFile) await uploadPendingPhoto('', '');
   closeCaptionModal();
 });
 
-document.getElementById('caption-save').addEventListener('click', () => {
+document.getElementById('caption-save').addEventListener('click', async () => {
   const caption = document.getElementById('caption-input').value.trim();
   const date = document.getElementById('date-input').value;
-  if (pendingFile) {
-    photos.push({ src: pendingFile, caption, date });
-    savePhotos(); renderBook(); toast('Added to the book!', '♥');
-  }
+  if (pendingFile) await uploadPendingPhoto(caption, date);
   closeCaptionModal();
 });
 
@@ -1033,11 +1353,28 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { closeCaptionModal(); closeGenericModal(); }
 });
 
-document.getElementById('clear-book-btn').addEventListener('click', () => {
-  if (photos.length === 0) { toast('Book is already empty.', '✓'); return; }
-  if (confirm('Clear all photos from the book? This cannot be undone.')) {
-    photos = []; savePhotos(); renderBook(); toast('Photo book cleared.', '✕');
-  }
+document.getElementById('clear-book-btn').addEventListener('click', async () => {
+  const list = photoSync.state.items;
+  if (list.length === 0) { toast('Book is already empty.', '✓'); return; }
+  if (!confirm('Clear all photos from the book? This cannot be undone.')) return;
+  toast('Clearing the book…', '✦');
+  for (const p of [...list]) { await photoSync.remove(p.id); }
+  photoSync.state.items = [];
+  renderBook();
+  toast('Photo book cleared.', '✕');
+});
+
+const photoSync = createSyncedResource({
+  type: 'photos', listKey: 'photos',
+  lockedEl: document.getElementById('book-locked'),
+  unlockedEl: document.getElementById('book-unlocked'),
+  syncStatusEl: document.getElementById('book-sync-status'),
+  refreshIndicatorEl: null,
+  lockBtn: document.getElementById('book-lock-btn'),
+  unlockForm: document.getElementById('book-unlock-form'),
+  unlockInput: document.getElementById('book-key-input'),
+  unlockError: document.getElementById('book-unlock-error'),
+  onList: renderBook,
 });
 
 
@@ -1045,9 +1382,18 @@ document.getElementById('clear-book-btn').addEventListener('click', () => {
 //  PDF EXPORT
 // ============================================================
 document.getElementById('export-pdf-btn').addEventListener('click', async () => {
-  if (photos.length === 0) { toast('Add some photos first!', '!'); return; }
+  if (photoSync.state.items.length === 0) { toast('Add some photos first!', '!'); return; }
   await generateVintagePhotoBookPDF();
 });
+
+function urlToDataUrl(url) {
+  return fetch(url).then(res => res.blob()).then(blob => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  }));
+}
 
 async function generateVintagePhotoBookPDF() {
   toast('Building your photo book…', '✦');
@@ -1058,8 +1404,13 @@ async function generateVintagePhotoBookPDF() {
   const margin = 48;
 
   const loaded = [];
-  for (let i = 0; i < photos.length; i++) {
-    try { const dim = await loadImageDimension(photos[i].src); loaded.push({ ...photos[i], ...dim }); } catch (e) {}
+  for (let i = 0; i < photoSync.state.items.length; i++) {
+    try {
+      const p = photoSync.state.items[i];
+      const dataUrl = await urlToDataUrl(p.src_url);
+      const dim = await loadImageDimension(dataUrl);
+      loaded.push({ src: dataUrl, caption: p.caption, date: p.taken_on, ...dim });
+    } catch (e) {}
   }
 
   paintCreamPage(pdf, pageW, pageH); paintPaperTexture(pdf, pageW, pageH); paintHalftoneCorner(pdf, pageW, pageH);
@@ -1126,14 +1477,9 @@ function paintHalftoneCorner(pdf, w, h) { pdf.setFillColor(214, 40, 40); pdf.set
 function drawHeart(pdf, cx, cy, size, color) { pdf.setFillColor(color[0], color[1], color[2]); const s = size; const pts = []; for (let i = 0; i <= 40; i++) { const t = (i / 40) * Math.PI * 2; pts.push([cx + 16 * Math.pow(Math.sin(t), 3) * (s / 16), cy - (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * (s / 16)]); } pdf.lines(pts.slice(1).map((p, i) => [p[0] - pts[i][0], p[1] - pts[i][1]]), pts[0][0], pts[0][1], [1, 1], 'F', true); }
 
 // INIT
-loadPhotos(); renderBook();
 setTimeout(() => { toast('Welcome back, Drea. ♥', '♥'); }, 800);
 
 /* ============ ADD ACTIVITY / SHARED DATE IDEA BOARD ============ */
-const BOARD_FUNCTION_URL = 'https://zhvoyvjpytauobqdszkm.supabase.co/functions/v1/love-date-board';
-const BOARD_KEY_STORAGE = 'summer-love-board-key';
-const BOARD_POLL_MS = 20000;
-
 let boardKey = null;
 let boardIdeas = [];
 let boardPollTimer = null;
@@ -1141,13 +1487,6 @@ let boardTabActive = false;
 let boardFetchInFlight = false;
 let boardLastFetchAt = 0;
 const BOARD_MIN_REFETCH_MS = 4000;
-
-function isValidHttpUrl(value) {
-  try {
-    const u = new URL(value);
-    return u.protocol === 'https:' || u.protocol === 'http:';
-  } catch (e) { return false; }
-}
 
 function showBoardError(el, message) {
   el.textContent = message;
@@ -1207,20 +1546,6 @@ function formatIdeaDate(value) {
   const [y, m, d] = value.split('-').map(Number);
   const date = new Date(y, m - 1, d);
   return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-function buildFallbackMedia(label) {
-  const fallback = document.createElement('div');
-  fallback.className = 'idea-fallback';
-  const icon = document.createElement('span');
-  icon.className = 'idea-fallback-icon';
-  icon.textContent = '♡';
-  const text = document.createElement('span');
-  text.className = 'idea-fallback-text';
-  text.textContent = label;
-  fallback.appendChild(icon);
-  fallback.appendChild(text);
-  return fallback;
 }
 
 function buildIdeaCard(idea) {
@@ -1461,6 +1786,168 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && boardTabActive && boardKey) {
     fetchIdeas({ silent: true });
   }
+});
+
+/* ============ MOVIE LIST (synced, poster auto-generated via Wikipedia) ============ */
+// Note: this previously used the iTunes Search API's media=movie/entity=movie
+// filters, but that combination now returns zero results for essentially any
+// real movie title (verified directly against Apple's servers). Wikipedia's
+// REST API is keyless, CORS-open, and nearly every film article carries its
+// theatrical poster as the lead image, so we use that instead: search for a
+// "<title> film" page, then pull that page's summary thumbnail.
+function upsizeWikiThumbnail(url, targetWidth) {
+  if (!url) return url;
+  return url.replace(/\/(\d+)px-/, `/${targetWidth || 500}px-`);
+}
+
+async function fetchMoviePoster(title) {
+  const trimmed = (title || '').trim();
+  if (!trimmed) return '';
+  try {
+    const searchUrl = `https://en.wikipedia.org/w/rest.php/v1/search/page?q=${encodeURIComponent(trimmed + ' film')}&limit=6`;
+    const searchRes = await fetch(searchUrl);
+    if (!searchRes.ok) return '';
+    const searchData = await searchRes.json();
+    const pages = Array.isArray(searchData.pages) ? searchData.pages : [];
+    if (!pages.length) return '';
+    const isFilmMatch = (p) => /film/i.test(p.description || '') && !/^list of/i.test(p.title || '');
+    const best = pages.find(isFilmMatch) || pages[0];
+    if (!best || !best.key) return '';
+
+    const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(best.key)}`;
+    const summaryRes = await fetch(summaryUrl);
+    if (!summaryRes.ok) return '';
+    const summaryData = await summaryRes.json();
+    const thumb = summaryData.thumbnail && summaryData.thumbnail.source;
+    if (!thumb) return '';
+    return upsizeWikiThumbnail(thumb, 500);
+  } catch (e) {
+    return '';
+  }
+}
+
+function buildMovieCard(movie) {
+  const card = document.createElement('div');
+  card.className = 'idea-card' + (movie.watched ? ' movie-watched' : '');
+
+  const tape = document.createElement('span');
+  tape.className = 'idea-tape';
+  card.appendChild(tape);
+
+  const media = document.createElement('div');
+  media.className = 'idea-media poster';
+  if (movie.poster_url && isValidHttpUrl(movie.poster_url)) {
+    const img = document.createElement('img');
+    img.src = movie.poster_url;
+    img.alt = movie.title;
+    img.loading = 'lazy';
+    img.addEventListener('error', () => { media.replaceChildren(buildFallbackMedia('No poster found')); }, { once: true });
+    media.appendChild(img);
+  } else {
+    media.appendChild(buildFallbackMedia('No poster found'));
+  }
+  card.appendChild(media);
+
+  const body = document.createElement('div');
+  body.className = 'idea-body';
+
+  const titleEl = document.createElement('h4');
+  titleEl.className = 'idea-title';
+  titleEl.textContent = movie.title;
+  body.appendChild(titleEl);
+
+  const meta = document.createElement('div');
+  meta.className = 'idea-meta';
+  const byEl = document.createElement('span');
+  byEl.textContent = movie.added_by ? `Added by ${movie.added_by}` : 'Added by us';
+  const statusEl = document.createElement('span');
+  statusEl.textContent = movie.watched ? 'Watched ✓' : 'Not watched yet';
+  meta.appendChild(byEl);
+  meta.appendChild(statusEl);
+  body.appendChild(meta);
+
+  const actions = document.createElement('div');
+  actions.className = 'idea-actions';
+
+  const toggleBtn = document.createElement('button');
+  toggleBtn.type = 'button';
+  toggleBtn.className = 'tool-btn primary small';
+  toggleBtn.textContent = movie.watched ? 'Mark Unwatched' : 'Mark Watched';
+  toggleBtn.addEventListener('click', () => toggleMovieWatched(movie));
+  actions.appendChild(toggleBtn);
+
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.className = 'tool-btn ghost small';
+  removeBtn.textContent = 'Remove';
+  removeBtn.addEventListener('click', () => confirmRemoveMovie(movie));
+  actions.appendChild(removeBtn);
+
+  body.appendChild(actions);
+  card.appendChild(body);
+  return card;
+}
+
+function renderMovieGrid() {
+  const grid = document.getElementById('movie-grid');
+  const empty = document.getElementById('movie-empty');
+  grid.innerHTML = '';
+  if (movieSync.state.items.length === 0) { empty.hidden = false; return; }
+  empty.hidden = true;
+  movieSync.state.items.forEach((m) => grid.appendChild(buildMovieCard(m)));
+}
+
+async function toggleMovieWatched(movie) {
+  const { ok, data } = await movieSync.patch(movie.id, { watched: !movie.watched });
+  if (!ok) { toast('Could not update that movie.', '!'); return; }
+  const idx = movieSync.state.items.findIndex((m) => m.id === movie.id);
+  if (idx > -1) movieSync.state.items[idx] = data.movie;
+  renderMovieGrid();
+}
+
+async function confirmRemoveMovie(movie) {
+  if (!confirm(`Remove "${movie.title}" from the list?`)) return;
+  const okDel = await movieSync.remove(movie.id);
+  if (!okDel) { toast('Could not remove that movie.', '!'); return; }
+  movieSync.state.items = movieSync.state.items.filter((m) => m.id !== movie.id);
+  renderMovieGrid();
+  toast('Movie removed.', '✕');
+}
+
+document.getElementById('movie-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById('movie-form-error');
+  hideFieldError(errorEl);
+  const title = document.getElementById('movie-title').value.trim();
+  const who = document.getElementById('movie-who').value;
+  if (!title) { showFieldError(errorEl, 'Give the movie a title.'); return; }
+
+  const btn = document.getElementById('movie-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Finding poster…';
+  const posterUrl = await fetchMoviePoster(title);
+  btn.textContent = 'Saving…';
+  const { ok, data } = await movieSync.add({ title, posterUrl, addedBy: who || undefined });
+  btn.disabled = false;
+  btn.textContent = 'Add to List ♡';
+  if (!ok) { showFieldError(errorEl, data.error || 'Could not save that movie.'); return; }
+  movieSync.state.items.unshift(data.movie);
+  renderMovieGrid();
+  e.target.reset();
+  toast('Movie added! ♡', '♡');
+});
+
+const movieSync = createSyncedResource({
+  type: 'movies', listKey: 'movies',
+  lockedEl: document.getElementById('movie-locked'),
+  unlockedEl: document.getElementById('movie-unlocked'),
+  syncStatusEl: document.getElementById('movie-sync-status'),
+  refreshIndicatorEl: document.getElementById('movie-refresh-indicator'),
+  lockBtn: document.getElementById('movie-lock-btn'),
+  unlockForm: document.getElementById('movie-unlock-form'),
+  unlockInput: document.getElementById('movie-key-input'),
+  unlockError: document.getElementById('movie-unlock-error'),
+  onList: renderMovieGrid,
 });
 </script>
 
