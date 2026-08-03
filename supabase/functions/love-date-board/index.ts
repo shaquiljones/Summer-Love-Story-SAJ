@@ -125,6 +125,38 @@ async function getPreview(sourceUrl: string) {
   return { previewTitle, previewImageUrl };
 }
 
+// TikTok/Instagram preview images are signed CDN URLs that expire after a
+// while (by platform design, for anti-hotlinking). Download the bytes once
+// at creation time and re-host them in our own public bucket so the
+// thumbnail never goes stale/403s down the line.
+async function rehostPreviewImage(ideaId: string, sourceUrl: string, imageUrl: string) {
+  try {
+    const response = await fetch(imageUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; DreaShaqDateBoard/1.0; +https://shaquiljones.github.io/Summer-Love-Story-SAJ/)",
+        "Referer": sourceUrl,
+      },
+    });
+    if (!response.ok) return imageUrl;
+    const contentType = response.headers.get("content-type") ?? "image/jpeg";
+    if (!contentType.startsWith("image/")) return imageUrl;
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    if (bytes.length === 0 || bytes.length > 8_000_000) return imageUrl;
+
+    const storagePath = `idea-thumbs/${ideaId}.jpg`;
+    const upload = await supabase.storage.from(PHOTOS_BUCKET).upload(storagePath, bytes, {
+      contentType,
+      upsert: true,
+    });
+    if (upload.error) return imageUrl;
+
+    const { data: pub } = supabase.storage.from(PHOTOS_BUCKET).getPublicUrl(storagePath);
+    return pub.publicUrl || imageUrl;
+  } catch {
+    return imageUrl;
+  }
+}
+
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const CATEGORIES = ["Date Night", "Dinner", "Fun/Outing", "Trip"];
@@ -162,14 +194,19 @@ async function handleIdeas(req: Request, origin: string | null) {
     if (submittedBy !== "Shaq" && submittedBy !== "Drea") return json({ error: "Choose who added it." }, 400, origin);
 
     const preview = await getPreview(sourceUrl);
+    const ideaId = crypto.randomUUID();
+    const hostedImageUrl = preview.previewImageUrl
+      ? await rehostPreviewImage(ideaId, sourceUrl, preview.previewImageUrl)
+      : "";
     const { data, error } = await supabase
       .from("shared_date_ideas")
       .insert({
+        id: ideaId,
         title,
         source_url: sourceUrl,
         planned_for: plannedFor || null,
         submitted_by: submittedBy,
-        preview_image_url: preview.previewImageUrl || null,
+        preview_image_url: hostedImageUrl || preview.previewImageUrl || null,
         preview_title: preview.previewTitle || null,
       })
       .select("id,title,source_url,planned_for,submitted_by,preview_image_url,preview_title,created_at")
@@ -183,6 +220,7 @@ async function handleIdeas(req: Request, origin: string | null) {
     if (!UUID_RE.test(id)) return json({ error: "That activity could not be found." }, 400, origin);
     const { error } = await supabase.from("shared_date_ideas").delete().eq("id", id);
     if (error) return json({ error: "Could not remove that activity." }, 500, origin);
+    await supabase.storage.from(PHOTOS_BUCKET).remove([`idea-thumbs/${id}.jpg`]);
     return json({ ok: true }, 200, origin);
   }
 
