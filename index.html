@@ -486,7 +486,6 @@ body {
     <div id="rest-unlocked" class="board-unlocked" hidden>
       <div class="board-toolbar">
         <span id="rest-sync-status" class="sync-status">● synced</span>
-        <button type="button" id="rest-lock-btn" class="tool-btn ghost small">Lock this device</button>
       </div>
 
       <div class="add-card-form">
@@ -529,7 +528,6 @@ body {
     <div id="cal-unlocked" class="board-unlocked" hidden>
       <div class="board-toolbar">
         <span id="cal-sync-status" class="sync-status">● synced</span>
-        <button type="button" id="cal-lock-btn" class="tool-btn ghost small">Lock this device</button>
       </div>
 
       <div class="cal-header">
@@ -567,7 +565,6 @@ body {
       <div id="book-unlocked" class="board-unlocked" hidden>
         <div class="board-toolbar">
           <span id="book-sync-status" class="sync-status">● synced</span>
-          <button type="button" id="book-lock-btn" class="tool-btn ghost small">Lock this device</button>
         </div>
         <div class="book-tools">
           <button class="tool-btn primary" id="add-photos-btn">＋ Add Photos</button>
@@ -599,7 +596,6 @@ body {
     <div id="movie-unlocked" class="board-unlocked" hidden>
       <div class="board-toolbar">
         <span id="movie-sync-status" class="sync-status">● synced</span>
-        <button type="button" id="movie-lock-btn" class="tool-btn ghost small">Lock this device</button>
       </div>
 
       <form id="movie-form" class="idea-form">
@@ -664,7 +660,6 @@ body {
       <div id="board-unlocked" class="board-unlocked" hidden>
         <div class="board-toolbar">
           <span id="board-sync-status" class="sync-status">● synced</span>
-          <button type="button" id="lock-board-btn" class="tool-btn ghost small">Lock this device</button>
         </div>
 
         <form id="idea-form" class="idea-form">
@@ -751,8 +746,12 @@ body {
 // Every synced feature reuses the same backend function and the same shared
 // board code (stored once in sessionStorage) so unlocking on any one tab
 // unlocks all of them for the rest of that browser session.
-const BOARD_FUNCTION_URL = 'https://zhvoyvjpytauobqdszkm.supabase.co/functions/v1/love-date-board';
+const BOARD_FUNCTION_URL = 'https://pjcrjpuwzjrlbrnhjziu.supabase.co/functions/v1/love-date-board';
 const BOARD_KEY_STORAGE = 'summer-love-board-key';
+// No more manual passphrase — everything auto-unlocks with this shared key so
+// neither of you ever has to type a code. (The edge function still checks
+// this header on every request; it's just no longer something a human enters.)
+const BOARD_KEY_STATIC = '082425';
 const BOARD_POLL_MS = 20000;
 
 function showFieldError(el, message) {
@@ -806,15 +805,10 @@ function createSyncedResource(cfg) {
   function showUnlocked() { cfg.lockedEl.hidden = true; cfg.unlockedEl.hidden = false; }
 
   function init() {
-    const stored = sessionStorage.getItem(BOARD_KEY_STORAGE);
-    if (stored) {
-      state.key = stored;
-      showUnlocked();
-      fetchList();
-      startPolling();
-    } else {
-      showLocked();
-    }
+    state.key = BOARD_KEY_STATIC;
+    showUnlocked();
+    fetchList();
+    startPolling();
   }
 
   async function fetchList(opts) {
@@ -1511,15 +1505,10 @@ function showBoardUnlocked() {
 }
 
 function initBoardTab() {
-  const stored = sessionStorage.getItem(BOARD_KEY_STORAGE);
-  if (stored) {
-    boardKey = stored;
-    showBoardUnlocked();
-    fetchIdeas();
-    startBoardPolling();
-  } else {
-    showBoardLocked();
-  }
+  boardKey = BOARD_KEY_STATIC;
+  showBoardUnlocked();
+  fetchIdeas();
+  startBoardPolling();
 }
 
 function sortIdeas() {
@@ -1729,15 +1718,6 @@ document.getElementById('unlock-form').addEventListener('submit', async (e) => {
     btn.disabled = false;
     btn.textContent = 'Unlock Board';
   }
-});
-
-document.getElementById('lock-board-btn').addEventListener('click', () => {
-  sessionStorage.removeItem(BOARD_KEY_STORAGE);
-  boardKey = null;
-  boardIdeas = [];
-  stopBoardPolling();
-  showBoardLocked();
-  toast('Board locked on this device.', '♡');
 });
 
 document.getElementById('idea-form').addEventListener('submit', async (e) => {
